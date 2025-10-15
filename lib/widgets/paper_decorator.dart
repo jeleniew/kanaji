@@ -14,6 +14,10 @@ class PaperDecorator extends CustomPainter {
     this.useStrokeOrderFont = false,
   });
   
+  Rect getDrawingArea(Size size) {
+    return Rect.fromLTWH(0, 0, size.width, size.height);
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     if (showSymbol && backgroundSymbol != null) _drawSymbol(canvas, size);

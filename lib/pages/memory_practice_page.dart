@@ -1,8 +1,17 @@
 // memory_practice_page.dart
 
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:kanaji/model_runner.dart';
+import 'package:kanaji/model_service.dart';
 import 'package:kanaji/symbols.dart';
 import 'package:kanaji/widgets/paper.dart';
+import 'package:kanaji/predict.dart';
 
 class MemoryPracticePage extends StatefulWidget {
   const MemoryPracticePage({super.key});
@@ -14,6 +23,7 @@ class MemoryPracticePage extends StatefulWidget {
 class _MemoryPracticePageState extends State<MemoryPracticePage> {
   final GlobalKey<PaperState> paperKey = GlobalKey<PaperState>();
 
+  /// reference: [lib/pages/second_page.dart -> _compareDrawing()]
   void _compareDrawing() {
     final points = paperKey.currentState?.points ?? [];
 
@@ -180,10 +190,184 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
       }
 
       final result = chunk.map((o) => 'Offset(${o[0]},${o[1]})').join(',');
-      print('[$result]');
     }
   }
 
+  ui.Image? previewImage;
+
+  Future<Float32List> loadAssetAsModelInput({
+    required String assetPath,
+    int targetW = 127,
+    int targetH = 128,
+  }) async {
+    // wczytaj plik binarnie
+    final bytes = await rootBundle.load(assetPath);
+    final Uint8List imgBytes = bytes.buffer.asUint8List();
+
+    // decode do ui.Image
+    final ui.Image decoded = await decodeImageFromList(imgBytes);
+
+    // stwórz nowy obraz o docelowym rozmiarze i narysuj tam decoded (skalowanie zachowa orientację)
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder, ui.Rect.fromLTWH(0, 0, targetW.toDouble(), targetH.toDouble()));
+
+    // białe tło (jeśli chcesz czarne, zmień kolor)
+    final paint = ui.Paint()..color = const ui.Color(0xFFFFFFFF);
+    canvas.drawRect(ui.Rect.fromLTWH(0, 0, targetW.toDouble(), targetH.toDouble()), paint);
+
+    // drawImageRect: narysuj cały decoded do całego docelowego rect (skalowanie)
+    final src = ui.Rect.fromLTWH(0, 0, decoded.width.toDouble(), decoded.height.toDouble());
+    final dst = ui.Rect.fromLTWH(0, 0, targetW.toDouble(), targetH.toDouble());
+    canvas.drawImageRect(decoded, src, dst, ui.Paint());
+
+    final picture = recorder.endRecording();
+    final ui.Image resized = await picture.toImage(targetW, targetH);
+
+    // konwersja do Float32List z funkcji niżej (dynamicznie wykorzystuje rozmiar obrazu)
+    final input = await imageToFloat32List(resized);
+    return input;
+  }
+
+  // Konwertuje ui.Image (dowolny rozmiar) -> Float32List (row-major), wartości 0..1
+  Future<Float32List> imageToFloat32List(ui.Image img) async {
+    final w = img.width;
+    final h = img.height;
+
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (byteData == null) throw Exception("Nie można pobrać byteData z obrazu");
+
+    final buffer = byteData.buffer.asUint8List();
+    final result = Float32List(w * h);
+
+    // iterujemy po pikselach w porządku row-major
+    for (int x = 0; x < w; x++) {
+      for (int y = 0; y < h; y++) {
+        final int idx = (y * w + x);
+        final int byteIndex = idx * 4;
+        final int r = buffer[byteIndex];
+        final int g = buffer[byteIndex + 1];
+        final int b = buffer[byteIndex + 2];
+        // jeśli potrzebujesz grayscale:
+        final double gray = (r + g + b) / 3.0;
+        // optional: invert if your model expects inverted colors:
+        // final double inverted = 255.0 - gray; // usuń / zmień jeśli nie trzeba inwersji
+        result[idx] = gray / 255.0; // scala do [0,1]
+      }
+    }
+    return result;
+  }
+
+  void _checkAI() async {
+    final paperState = paperKey.currentState;
+    if (paperState == null) {
+      print("Brak PaperState");
+      return;
+    }
+
+    final points = paperState.points;
+    if (points.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Narysuj coś najpierw!")),
+      );
+      return;
+    }
+
+    try {
+      final img = await paperState.exportToImage(points);
+      final input = await paperState.imageToByteList(img);
+
+      final models = ModelService().allModels;
+      final predictedSymbols = [];
+      for (final m in models) {
+        final predictedIdx = await m.predict(input);
+        final predictedSymbol = hiraganaSymbols[predictedIdx % hiraganaSymbols.length];
+        
+        print("przewidziano: $predictedSymbol");
+        predictedSymbols.add(predictedSymbol);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("AI rozpoznało: $predictedSymbols"),
+          backgroundColor: Colors.blue,
+        ),
+      );
+
+      final preview = await float32ListToImage(input, 127, 128);
+
+      setState(() {
+        previewImage = preview;
+      });
+
+    } catch (e, st) {
+      print("Błąd AI: $e\n$st");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Wystąpił błąd podczas predykcji")),
+      );
+    }
+  }
+
+  void _checkAI2() async {
+    try {
+      final bytes = await rootBundle.load('assets/icons/test_9250.png');
+      final Uint8List imgBytes = bytes.buffer.asUint8List();
+      final ui.Image img = await decodeImageFromList(imgBytes);
+      final paperState = paperKey.currentState;
+      if (paperState == null) {
+        print("Brak PaperState (używany tylko do konwersji)");
+        return;
+      }
+
+      final Float32List input = await paperState.imageToByteList(img);
+
+      final preview = await float32ListToImage(input, 127, 128);
+
+      setState(() {
+        previewImage = preview;
+      });
+
+
+      final models = ModelService().allModels;
+      for (final m in models) {
+        final predictedIdx = await m.predict(input);
+        final predictedSymbol = hiraganaSymbols[predictedIdx % hiraganaSymbols.length];
+        
+        print("przewidziano: $predictedSymbol");
+      }
+
+    } catch (e) {
+      print("Błąd podczas testowania modelu: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Błąd: $e")),
+      );
+    }
+  }
+
+
+
+  Future<ui.Image> float32ListToImage(Float32List input, int width, int height) async {
+    final pixels = Uint8List(width * height * 4);
+
+    for (int i = 0; i < width * height; i++) {
+      final value = (input[i] * 255).clamp(0, 255).toInt(); // skala [0,255]
+      // ustawiamy grayscale jako RGBA
+      pixels[i * 4] = value;     // R
+      pixels[i * 4 + 1] = value; // G
+      pixels[i * 4 + 2] = value; // B
+      pixels[i * 4 + 3] = 255;   // A
+    }
+
+    final completer = Completer<ui.Image>();
+    ui.decodeImageFromPixels(
+      pixels,
+      width,
+      height,
+      ui.PixelFormat.rgba8888,
+      (img) => completer.complete(img),
+    );
+
+    return completer.future;
+  }
 
 
   @override
@@ -203,10 +387,26 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
                     key: paperKey,
                     showGrid: true,
                     showSymbol: false,
+                    backgroundSymbol: 'あ',
                   )
                 )
               ),
             ),
+            if (previewImage != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  children: [
+                    const Text("Podgląd dla modelu (127x128)"),
+                    Container(
+                      width: 127,
+                      height: 128,
+                      color: Colors.black,
+                      child: RawImage(image: previewImage),
+                    ),
+                  ],
+                ),
+              ),
             Row(
               children: [
                 ElevatedButton(
@@ -216,6 +416,10 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
                 ElevatedButton(
                   onPressed: _compareDrawing,
                   child: const Text('Check'),
+                ),
+                ElevatedButton(
+                  onPressed: _checkAI,
+                  child: const Text('Check AI'),
                 ),
                 ElevatedButton(onPressed: _saveDrawing, child: const Text('Save')),
                 ElevatedButton(onPressed: _toggleFont, child: const Text('Font')),
