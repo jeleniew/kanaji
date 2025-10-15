@@ -1,13 +1,22 @@
 // main.dart
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:kanaji/model_service.dart';
 import 'package:kanaji/pages/flashcards_page.dart';
 import 'package:kanaji/pages/memory_practice_page.dart';
 import 'package:kanaji/pages/second_page.dart';
 
 import 'pages/home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid || Platform.isIOS) {
+    await ModelService().init();
+  } else {
+    print("AI does not work on desktop.");
+  }
   runApp(const MyApp());
 }
 
