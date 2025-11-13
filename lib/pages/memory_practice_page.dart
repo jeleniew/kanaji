@@ -1,17 +1,17 @@
 // memory_practice_page.dart
 
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kanaji/model_runner.dart';
-import 'package:kanaji/model_service.dart';
+import 'package:kanaji/services/model_service.dart';
 import 'package:kanaji/symbols.dart';
 import 'package:kanaji/widgets/paper.dart';
-import 'package:kanaji/predict.dart';
+import 'package:image/image.dart' as img;
+import '../services/image_processing.dart';
 
 class MemoryPracticePage extends StatefulWidget {
   const MemoryPracticePage({super.key});
@@ -33,16 +33,15 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
       if (p == null) {
         if (currentStroke.isNotEmpty) {
           userStrokes.add(currentStroke);
-          print("Added ${currentStroke.length}");
           currentStroke = [];
         }
       } else {
         currentStroke.add(p);
       }
     }
+
     if (currentStroke.isNotEmpty) {
       userStrokes.add(currentStroke);
-      print("Added");
     }
 
     // Pobierz referencję symbolu 'あ' (zakładam, że masz mapę symboli)
@@ -58,28 +57,6 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
 
     bool result = compareSymbol(userStrokes, reference, threshold: 0.35);
 
-    if (!result) {
-      for (int i = 0; i < userStrokes.length; i++) {
-        final stroke = userStrokes[i];
-        print("Kreska ${i + 1}:");
-        // Wypisz maksymalnie 3 punkty (równomiernie wybrane, jeśli więcej)
-        int count = stroke.length;
-        List<Offset> pointsToShow;
-        if (count <= 3) {
-          pointsToShow = stroke;
-        } else {
-          // Wybierz 3 punkty równomiernie rozmieszczone
-          pointsToShow = [
-            stroke[0],
-            stroke[count ~/ 2],
-            stroke[count - 1],
-          ];
-        }
-        // for (var pt in pointsToShow) {
-        //   print("  Punkt: (${pt.dx.toStringAsFixed(1)}, ${pt.dy.toStringAsFixed(1)})");
-        // }
-      }
-    }
     final snackBar = SnackBar(
       content: Text(result ? 'Correct!' : 'Incorrect'),
       backgroundColor: result ? Colors.green : Colors.red,
@@ -92,7 +69,8 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
     paperKey.currentState?.clear();
   }
 
-  final List<String> hiraganaSymbols = ['あ','い', 'う', 'え', 'お', 'か'];
+  final List<String> hiraganaSymbols = ['あ','い', 'う', 'え', 'お'];//, 'か'];
+  final List<int> jisLabel = [9250, 9252, 9254, 9256, 9258];
 
   void _changeSymbol() {
     final paperState = paperKey.currentState;
@@ -136,10 +114,6 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
       paperState.changeBackgroundSymbol(hiraganaSymbols[nextIndex]);
       print("Changed to ${hiraganaSymbols[nextIndex]}");
     }
-  }
-
-  void _toggleFont() {
-    paperKey.currentState?.toggleFont();
   }
 
 
@@ -273,8 +247,14 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
     }
 
     try {
-      final img = await paperState.exportToImage(points);
-      final input = await paperState.imageToByteList(img);
+      final image = await paperState.exportToImage(points);
+
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) {
+        print("Nie można uzyskać ByteData z obrazu");
+        return;
+      }
+      final (img.Image processed, Float32List input) = await processImage(byteData);
 
       final models = ModelService().allModels;
       final predictedSymbols = [];
@@ -293,7 +273,7 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
         ),
       );
 
-      final preview = await float32ListToImage(input, 127, 128);
+      final preview = await float32ListToImage(input, 128, 127);
 
       setState(() {
         previewImage = preview;
@@ -307,33 +287,35 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
     }
   }
 
-  void _checkAI2() async {
+  
+  void _checkAITestImage() async {
     try {
-      final bytes = await rootBundle.load('assets/icons/test_9250.png');
-      final Uint8List imgBytes = bytes.buffer.asUint8List();
-      final ui.Image img = await decodeImageFromList(imgBytes);
-      final paperState = paperKey.currentState;
-      if (paperState == null) {
-        print("Brak PaperState (używany tylko do konwersji)");
-        return;
-      }
+      final jis = jisLabel[hiraganaSymbols.indexOf(paperKey.currentState?.backgroundSymbol ?? 'あ')];
+      final bytes = await rootBundle.load('assets/icons/test_$jis.png');
+      final (img.Image processed, Float32List input) = await processImage(bytes);
 
-      final Float32List input = await paperState.imageToByteList(img);
-
-      final preview = await float32ListToImage(input, 127, 128);
+      final ui.Image preview = await convertToUIImage(processed);
 
       setState(() {
         previewImage = preview;
       });
 
-
       final models = ModelService().allModels;
+      final predictedSymbols = [];
       for (final m in models) {
         final predictedIdx = await m.predict(input);
         final predictedSymbol = hiraganaSymbols[predictedIdx % hiraganaSymbols.length];
         
         print("przewidziano: $predictedSymbol");
+        predictedSymbols.add(predictedSymbol);
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("AI rozpoznało: $predictedSymbols"),
+          backgroundColor: Colors.blue,
+        ),
+      );
 
     } catch (e) {
       print("Błąd podczas testowania modelu: $e");
@@ -392,22 +374,24 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
                 )
               ),
             ),
-            if (previewImage != null)
+            if (kDebugMode && previewImage != null)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
                   children: [
-                    const Text("Podgląd dla modelu (127x128)"),
+                    const Text("Podgląd dla modelu (128x127)"),
                     Container(
-                      width: 127,
-                      height: 128,
-                      color: Colors.black,
+                      width: 128,
+                      height: 127,
+                      color: Colors.red,
                       child: RawImage(image: previewImage),
                     ),
                   ],
                 ),
               ),
-            Row(
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
               children: [
                 ElevatedButton(
                   onPressed: _clearPaper,
@@ -419,10 +403,10 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
                 ),
                 ElevatedButton(
                   onPressed: _checkAI,
+                  // onPressed: _checkAITestImage,
                   child: const Text('Check AI'),
                 ),
-                ElevatedButton(onPressed: _saveDrawing, child: const Text('Save')),
-                ElevatedButton(onPressed: _toggleFont, child: const Text('Font')),
+                // ElevatedButton(onPressed: _saveDrawing, child: const Text('Save')),
                 ElevatedButton(onPressed: _bringBackSymbol, child: const Text('Previous')),
                 ElevatedButton(onPressed: _changeSymbol, child: const Text('Next')),
               ],

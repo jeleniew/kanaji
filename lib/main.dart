@@ -3,7 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:kanaji/model_service.dart';
+import 'package:kanaji/services/model_service.dart';
 import 'package:kanaji/pages/flashcards_page.dart';
 import 'package:kanaji/pages/memory_practice_page.dart';
 import 'package:kanaji/pages/second_page.dart';
