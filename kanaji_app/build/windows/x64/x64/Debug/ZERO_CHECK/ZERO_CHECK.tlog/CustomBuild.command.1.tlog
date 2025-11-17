@@ -1,0 +1,10 @@
+^D:\STUDIA\SEMESTR 6\PROJEKT DYPLOMOWY\REPO\KANAJI\KANAJI_APP\BUILD\WINDOWS\X64\CMAKEFILES\F2E14D36FB7930B07242708E00D18E7D\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SD:/Studia/Semestr 6/Projekt dyplomowy/repo/kanaji/kanaji_app/windows" "-BD:/Studia/Semestr 6/Projekt dyplomowy/repo/kanaji/kanaji_app/build/windows/x64" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "D:/Studia/Semestr 6/Projekt dyplomowy/repo/kanaji/kanaji_app/build/windows/x64/kanaji.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

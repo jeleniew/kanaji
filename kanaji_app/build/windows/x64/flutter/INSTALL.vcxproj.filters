@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Studia\Semestr 6\Projekt dyplomowy\repo\kanaji\kanaji_app\build\windows\x64\CMakeFiles\1bc686cc126b41066216a6f16b7bd57a\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{E78EA0F2-8D38-3FD1-835E-19C81E7EAFAA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
