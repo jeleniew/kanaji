@@ -2,8 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:kanaji/viewmodels/interfaces/i_flashcards_viewmodel.dart';
 
-class FlashcardsViewModel extends ChangeNotifier
-  implements IFlashcardsViewModel {
+class FlashcardsViewModel extends IFlashcardsViewModel {
     
   final List<String> hiragana = ['あ', 'い', 'う', 'え', 'お'];
   final List<String> polish = ['a', 'i', 'u', 'e', 'o'];
@@ -28,7 +27,6 @@ class FlashcardsViewModel extends ChangeNotifier
     
     notifyListeners();
   }
-
 
   @override
   void toggleSign() {

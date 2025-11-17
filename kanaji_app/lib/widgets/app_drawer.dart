@@ -19,7 +19,7 @@ Drawer appDrawer(BuildContext context) {
           ListTile(
             title: const Text('Hiragana'),
             onTap: () {
-              Navigator.of(context).pushNamed('/second');
+              Navigator.of(context).pushNamed('/tracing');
             },
           ),
           ListTile(
