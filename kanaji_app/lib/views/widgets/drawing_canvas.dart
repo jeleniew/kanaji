@@ -10,12 +10,11 @@ class DrawingCanvas extends StatelessWidget{
   Widget build(BuildContext context) {
     final vm = Provider.of<IDrawingCanvasViewModel>(context);
     return GestureDetector(
-      onPanUpdate: (details) {
-        vm.addPoints(details.localPosition);
-      },
+      onPanUpdate: (details) => vm.addPoints(details.localPosition),
+      onPanEnd: (details) => vm.endStroke(),
       child: CustomPaint(
         size: Size.infinite,
-        painter: DrawingPainter(points: vm.points),
+        painter: DrawingPainter(strokes: vm.strokes),
       ),
     );
   }

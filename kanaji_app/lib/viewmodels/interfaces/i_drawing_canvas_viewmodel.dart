@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 abstract class IDrawingCanvasViewModel extends ChangeNotifier {
-  List<Offset?> get points;
-
+  List<List<Offset?>> get strokes;
   void addPoints(Offset localPosition);
+  void endStroke();
+  void clear();
 }

@@ -1,16 +1,12 @@
 // tracing_viewmodel.dart
 import 'package:flutter/widgets.dart';
+import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
 
 class TracingViewModel extends ITracingViewModel {
   @override
-  String get currentCharacter => 'あ'; // Example character
-
-  @override
-  void clear() {
-    // Implementation for clearing the tracing area
-  }
-
+  String get currentCharacter => 'あ';
+  
   @override
   void previous() {
     // Implementation for going to the previous character
@@ -22,12 +18,12 @@ class TracingViewModel extends ITracingViewModel {
   }
 
   @override
-  void check(List<Offset?> points) {
+  void check(List<List<Offset?>> points) {
     // Implementation for checking the tracing accuracy
   }
 
   @override
-  void checkAI(List<Offset?> points) {
+  void checkAI(List<List<Offset?>> points) {
     // Implementation for AI-based checking of the tracing
   }
 

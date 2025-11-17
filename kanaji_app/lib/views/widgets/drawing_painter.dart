@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DrawingPainter extends CustomPainter {
-  final List<Offset?> points;
+  final List<List<Offset?>> strokes;
 
-  DrawingPainter({required this.points});
+  DrawingPainter({required this.strokes});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -14,10 +14,12 @@ class DrawingPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round
       ..isAntiAlias = true;
 
-    for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i]!, points[i + 1]!, paint);
-        // Krzywa Bezier: Path -> quadraticBezierTo()
+    for (var stroke in strokes) {
+      for (int i = 0; i < stroke.length - 1; i++) {
+        if (stroke[i] != null && stroke[i + 1] != null) {
+          canvas.drawLine(stroke[i]!, stroke[i + 1]!, paint);
+          // Krzywa Bezier: Path -> quadraticBezierTo()
+        }
       }
     }
   }
