@@ -1,18 +1,21 @@
+// grid_canvas.dart
 import 'package:flutter/material.dart';
 
 class GridCanvas extends StatelessWidget {
   final String character;
+  final String? font;
 
   // TODO: check if super is needed
-  const GridCanvas({Key? key, required this.character}) : super(key: key);
-
+  const GridCanvas({Key? key, required this.character, required this.font}) : super(key: key);
   static const gridLineColor = Color(0xFF424242);
   static const gridBackgroundColor = Color(0xFFFFDDE9);
   static const hintTextColor = Color.fromARGB(255, 158, 158, 158);
   static const fontSizeFactor = 0.8;
 
   TextStyle _textStyle(double fontSize) {
+    print(font);
     return TextStyle(
+      fontFamily: font,
       fontSize: fontSize,
       height: 0.5,
       color: hintTextColor,

@@ -10,7 +10,8 @@ class DrawingCanvasViewModel extends IDrawingCanvasViewModel {
   @override
   List<List<Offset?>> get strokes  {
     print("get strokes called");
-    return List.from(_strokes)..add(_currentStroke);}
+    return List.from(_strokes)..add(_currentStroke);
+  }
 
   @override
   void addPoints(Offset localPosition) {

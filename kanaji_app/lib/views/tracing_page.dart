@@ -1,6 +1,5 @@
 // tracing_page.dart
 import 'package:flutter/material.dart';
-import 'package:kanaji/viewmodels/drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
 import 'package:kanaji/views/widgets/drawing_canvas.dart';
@@ -22,7 +21,8 @@ class TracingPage extends StatelessWidget {
             child: Stack(
               children: [
                 GridCanvas(
-                  character: vm.currentCharacter
+                  character: vm.currentCharacter,
+                  font: vm.font,
                 ),
                 const DrawingCanvas(),
               ],
@@ -44,7 +44,7 @@ class TracingPage extends StatelessWidget {
                 final drawingVM = Provider.of<IDrawingCanvasViewModel>(context, listen: false);
                 vm.checkAI(drawingVM.strokes);
               }, child: Text('Check AI')),
-              ElevatedButton(onPressed: vm.font, child: Text('Font')),
+              ElevatedButton(onPressed: vm.changeFont, child: Text('Font')),
             ],
           )
         ],

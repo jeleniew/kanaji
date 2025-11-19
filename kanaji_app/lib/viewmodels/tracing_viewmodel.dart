@@ -1,20 +1,29 @@
 // tracing_viewmodel.dart
 import 'package:flutter/widgets.dart';
-import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
 
 class TracingViewModel extends ITracingViewModel {
+  final List<String> _characters = ['あ', 'い', 'う', 'え', 'お'];
+  final List<int> jisLabel = [9250, 9252, 9254, 9256, 9258];
+  int _currentIndex = 0;
+  bool _isKanjiOrderFont = true;
+
   @override
-  String get currentCharacter => 'あ';
+  String get currentCharacter => _characters[_currentIndex];
+
+  @override
+  String? get font => _isKanjiOrderFont ? 'KanjiStrokeOrder' : null;
   
   @override
   void previous() {
-    // Implementation for going to the previous character
+    _currentIndex = (_currentIndex - 1 + _characters.length) % _characters.length;
+    notifyListeners();
   }
 
   @override
   void next() {
-    // Implementation for going to the next character
+    _currentIndex = (_currentIndex + 1) % _characters.length;
+    notifyListeners();
   }
 
   @override
@@ -28,7 +37,8 @@ class TracingViewModel extends ITracingViewModel {
   }
 
   @override
-  void font() {
-    // Implementation for changing the font style
+  void changeFont() {
+    _isKanjiOrderFont = !_isKanjiOrderFont;
+    notifyListeners();
   }
 }
