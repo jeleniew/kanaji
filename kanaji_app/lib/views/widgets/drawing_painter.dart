@@ -1,5 +1,7 @@
+// drawing_painter.dart
 import 'package:flutter/material.dart';
 
+// TODO: should not let write outside of bounds
 class DrawingPainter extends CustomPainter {
   final List<List<Offset?>> strokes;
 

@@ -60,6 +60,13 @@ class MyApp extends StatelessWidget {
         '/flashcards': (context) => FlashcardsPage(),
         '/memory_practice': (context) => MemoryPracticePage(),
       },
+      builder: (context, child) {
+        return SafeArea(
+          bottom: true,
+          top: false,
+          child: child!,
+          );
+      },
     );
   }
 }

@@ -3,13 +3,15 @@ import 'dart:ui';
 import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 
 class DrawingCanvasViewModel extends IDrawingCanvasViewModel {
-  List<List<Offset?>> _strokes = [];
-  List<Offset?> _currentStroke = [];
+  List<List<Offset>> _strokes = [];
+  List<Offset> _currentStroke = [];
   // TODO: add smoothing lines
 
   @override
-  List<List<Offset?>> get strokes  {
-    print("get strokes called");
+  List<List<Offset>> get strokes  {
+    if (_currentStroke.isEmpty) {
+      return _strokes;
+    }
     return List.from(_strokes)..add(_currentStroke);
   }
 

@@ -1,44 +1,79 @@
 // tracing_viewmodel.dart
 import 'package:flutter/widgets.dart';
+import 'package:kanaji/services/character_repository.dart';
+import 'package:kanaji/services/drawing_analyzer_service.dart';
+import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
 
+enum TracingResult {none, correct, incorrect}
+
 class TracingViewModel extends ITracingViewModel {
-  final List<String> _characters = ['あ', 'い', 'う', 'え', 'お'];
-  final List<int> jisLabel = [9250, 9252, 9254, 9256, 9258];
   int _currentIndex = 0;
   bool _isKanjiOrderFont = true;
+  late IDrawingCanvasViewModel _drawingCanvasViewModel;
+  final CharacterRepository _characterRepository = CharacterRepository();
+  TracingResult _tracingResult = TracingResult.none;
 
   @override
-  String get currentCharacter => _characters[_currentIndex];
+  void attachDrawingVM(IDrawingCanvasViewModel vm) {
+    _drawingCanvasViewModel = vm;
+  }
+
+  @override
+  String get currentCharacter => _characterRepository.getCharacterByIndex(_currentIndex).glyph;
 
   @override
   String? get font => _isKanjiOrderFont ? 'KanjiStrokeOrder' : null;
+
+  @override
+  TracingResult get tracingResult => _tracingResult;
   
   @override
   void previous() {
-    _currentIndex = (_currentIndex - 1 + _characters.length) % _characters.length;
+    clear();
+    int charactersLength = _characterRepository.characters.length;
+    _currentIndex = (_currentIndex - 1 + charactersLength) % charactersLength;
     notifyListeners();
   }
 
   @override
   void next() {
-    _currentIndex = (_currentIndex + 1) % _characters.length;
+    clear();
+    int charactersLength = _characterRepository.characters.length;
+    _currentIndex = (_currentIndex + 1) % charactersLength;
     notifyListeners();
   }
 
   @override
-  void check(List<List<Offset?>> points) {
-    // Implementation for checking the tracing accuracy
+  void check() {
+    List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
+
+    final character = _characterRepository.getCharacterByIndex(_currentIndex);
+    final result =  DrawingAnalyzerService().compare(expectedStrokes, character);
+
+    if (result) {
+      _tracingResult = TracingResult.correct;
+    } else {
+      _tracingResult = TracingResult.incorrect;
+    }
+    notifyListeners();
   }
 
   @override
-  void checkAI(List<List<Offset?>> points) {
+  void checkAI() {
     // Implementation for AI-based checking of the tracing
   }
 
   @override
   void changeFont() {
     _isKanjiOrderFont = !_isKanjiOrderFont;
+    notifyListeners();
+  }
+
+  @override
+  void clear() {
+    _tracingResult = TracingResult.none;
+    _drawingCanvasViewModel.clear();
     notifyListeners();
   }
 }
