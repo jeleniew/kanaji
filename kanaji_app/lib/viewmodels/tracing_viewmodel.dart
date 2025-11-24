@@ -5,6 +5,7 @@ import 'package:kanaji/services/drawing_analyzer_service.dart';
 import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
 
+// TODO: move to a separate file
 enum TracingResult {none, correct, incorrect}
 
 class TracingViewModel extends ITracingViewModel {
@@ -30,6 +31,7 @@ class TracingViewModel extends ITracingViewModel {
   
   @override
   void previous() {
+    // TODO: notifyListeners is invoked twice here
     clear();
     int charactersLength = _characterRepository.characters.length;
     _currentIndex = (_currentIndex - 1 + charactersLength) % charactersLength;

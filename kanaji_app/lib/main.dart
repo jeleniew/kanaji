@@ -9,9 +9,11 @@ import 'package:kanaji/viewmodels/flashcards_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_flashcards_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
+import 'package:kanaji/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/viewmodels/tracing_viewmodel.dart';
+import 'package:kanaji/viewmodels/writing_viewmodel.dart';
 import 'package:kanaji/views/tracing_page.dart';
-import 'package:kanaji/views/widgets/drawing_canvas.dart';
+import 'package:kanaji/views/writing_page.dart';
 import 'package:provider/provider.dart';
 import 'views/flashcards_page.dart';
 import 'package:kanaji/pages/memory_practice_page.dart';
@@ -40,6 +42,9 @@ void main() async {
         ChangeNotifierProvider<IDrawingCanvasViewModel>(
           create: (_) => DrawingCanvasViewModel()
         ),
+        ChangeNotifierProvider<IWritingViewModel>(
+          create: (_) => WritingViewModel(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -58,7 +63,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/tracing': (context) => TracingPage(),
         '/flashcards': (context) => FlashcardsPage(),
-        '/memory_practice': (context) => MemoryPracticePage(),
+        '/memory_practice': (context) => WritingPage(),
       },
       builder: (context, child) {
         return SafeArea(

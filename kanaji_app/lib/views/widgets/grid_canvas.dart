@@ -6,7 +6,7 @@ class GridCanvas extends StatelessWidget {
   final String? font;
 
   // TODO: check if super is needed
-  const GridCanvas({Key? key, required this.character, required this.font}) : super(key: key);
+  const GridCanvas({Key? key, required this.character, this.font}) : super(key: key);
   static const gridLineColor = Color(0xFF424242);
   static const gridBackgroundColor = Color(0xFFFFDDE9);
   static const hintTextColor = Color.fromARGB(255, 158, 158, 158);
