@@ -254,7 +254,7 @@ class _MemoryPracticePageState extends State<MemoryPracticePage> {
         print("Nie można uzyskać ByteData z obrazu");
         return;
       }
-      final (img.Image processed, Float32List input) = await processImage(byteData);
+      final Float32List input = await processImage(byteData);
 
       final models = ModelService().allModels;
       final predictedSymbols = [];

@@ -34,6 +34,13 @@ class TracingPage extends StatelessWidget {
               ],
             ),
           ),
+          if (vm.processedImage != null)
+            Container(
+              width: 128,
+              height: 127,
+              color: Colors.red,
+              child: RawImage(image: vm.processedImage),
+            ),
           if (vm.tracingResult == TracingResult.none)
             _buildActionBar(vm),
             if (vm.tracingResult != TracingResult.none) _buildResultBar(vm),

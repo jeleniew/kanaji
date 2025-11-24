@@ -1,14 +1,105 @@
 // image_processing.dart
-
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'dart:math';
 import 'package:image/image.dart' as img;
+import 'package:kanaji/widgets/finger_pen.dart';
 
 
-Future<(img.Image, Float32List)> processImage(ByteData inputImage) async {
+Future<Image> convertPointsToImage(List<List<Offset?>> strokes, Size canvasSize) async {
+  final recorder = PictureRecorder();
+  final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height));
+  final paint = Paint()
+    ..color = const Color(0xFFFFFFFF)
+    ..style = PaintingStyle.fill;
+
+  canvas.drawRect(Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height), paint);
+  canvas.save();
+
+  final preprocessedStrokes = preprocessStrokes(strokes.cast<List<Offset>>());
+
+  for (var stroke in preprocessedStrokes) {
+    for (int i = 0; i < stroke.length - 1; i++) {
+      // canvas.drawLine(stroke[i]!, stroke[i + 1]!, paint);
+      FingerPen(stroke).paint(canvas, canvasSize);
+    }
+  }
+
+  canvas.restore();
+
+  final picture = recorder.endRecording();
+  final imgImage = await picture.toImage(
+      canvasSize.width.toInt(), canvasSize.height.toInt());
+  return imgImage;
+}
+
+List<List<Offset>> preprocessStrokes(List<List<Offset>> strokes) {
+  // TODO: this is necessary to work, try to reduce code - it is done twice -> here and in cutCenterAndScale
+  if (strokes.isEmpty || strokes.every((stroke) => stroke.isEmpty)) {
+    return strokes;
+  }
+
+  double minX = strokes
+      .expand((stroke) => stroke)
+      .map((p) => p.dx)
+      .reduce(min);
+  double maxX = strokes
+      .expand((stroke) => stroke)
+      .map((p) => p.dx)
+      .reduce(max);
+  double minY = strokes
+      .expand((stroke) => stroke)
+      .map((p) => p.dy)
+      .reduce(min);
+  double maxY = strokes
+      .expand((stroke) => stroke)
+      .map((p) => p.dy)
+      .reduce(max);
+
+  double width = maxX - minX;
+  double height = maxY - minY;
+
+  if (width == 0 || height == 0) {
+    return strokes;
+  }
+
+  const targetAspectRatio = 128 / 127;
+  final aspectRatio = width / height;
+
+  double newMinX = minX;
+  double newMaxX = maxX;
+  double newMinY = minY;
+  double newMaxY = maxY;
+
+  if (aspectRatio > targetAspectRatio) {
+    final newH = width / targetAspectRatio;
+    final diff = newH - height;
+    newMinY -= diff / 2;
+    newMaxY += diff / 2;
+  } else if (aspectRatio < targetAspectRatio) {
+    final newW = height * targetAspectRatio;
+    final diff = newW - width;
+    newMinX -= diff / 2;
+    newMaxX += diff / 2;
+  }
+
+  const marginRatio = 0.1;
+  final scaledStrokes = strokes.map((stroke) {
+    return stroke.map((p) {
+      final normX = (p.dx - newMinX) / (newMaxX - newMinX);
+      final normY = (p.dy - newMinY) / (newMaxY - newMinY);
+      final dx = (normX * (1 - 2 * marginRatio)) + marginRatio;
+      final dy = (normY * (1 - 2 * marginRatio)) + marginRatio;
+      return Offset(dx * 128, dy * 127);
+    }).toList();
+  }).toList();
+  
+  return scaledStrokes;
+}
+
+Future<Float32List> processImage(ByteData inputImage) async {
   final Uint8List imgBytes = inputImage.buffer.asUint8List();
 
   final img.Image? decoded = img.decodeImage(imgBytes);
@@ -28,7 +119,7 @@ Future<(img.Image, Float32List)> processImage(ByteData inputImage) async {
 
   Float32List floatInput = _imageToFloat32List(image);
 
-  return Future.value((image, floatInput));
+  return Future.value(floatInput);
 }
 
 
@@ -158,9 +249,9 @@ img.Image smoothEdges(img.Image input, {int kernelSize = 5}) {
 }
 
 
-Future<ui.Image> convertToUIImage(img.Image image) async {
+Future<Image> convertToUIImage(img.Image image) async {
   final pngBytes = Uint8List.fromList(img.encodePng(image));
-  final codec = await ui.instantiateImageCodec(pngBytes);
+  final codec = await instantiateImageCodec(pngBytes);
   final frame = await codec.getNextFrame();
   return frame.image;
 }
@@ -175,4 +266,29 @@ Float32List _imageToFloat32List(img.Image image) {
     }
   }
   return floatList;
+}
+
+
+Future<Image> float32ListToImage(Float32List input, int width, int height) async {
+  final pixels = Uint8List(width * height * 4);
+
+  for (int i = 0; i < width * height; i++) {
+    final value = (input[i] * 255).clamp(0, 255).toInt(); // skala [0,255]
+    // ustawiamy grayscale jako RGBA
+    pixels[i * 4] = value;     // R
+    pixels[i * 4 + 1] = value; // G
+    pixels[i * 4 + 2] = value; // B
+    pixels[i * 4 + 3] = 255;   // A
+  }
+
+  final completer = Completer<Image>();
+  decodeImageFromPixels(
+    pixels,
+    width,
+    height,
+    PixelFormat.rgba8888,
+    (img) => completer.complete(img),
+  );
+
+  return completer.future;
 }

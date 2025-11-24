@@ -1,5 +1,6 @@
 // prediction_service.dart
 import 'dart:typed_data';
+import 'package:kanaji/services/character_repository.dart';
 
 import 'model_service.dart';
 
@@ -15,7 +16,10 @@ class PredictionService {
 
     for (var model in _modelService.allModels) {
       try {
-        var prediction = await model.predict(inputData);
+        var predictedIdx = await model.predict(inputData);
+        print(predictedIdx);
+        var prediction = CharacterRepository().characters[predictedIdx].glyph;
+        print(prediction);
         results.add({'model': model, 'prediction': prediction});
       } catch (e) {
         print("Prediction failed for model ${model.modelPath}: $e");
