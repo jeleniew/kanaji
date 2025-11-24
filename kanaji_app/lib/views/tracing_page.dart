@@ -1,5 +1,6 @@
 // tracing_page.dart
 import 'package:flutter/material.dart';
+import 'package:kanaji/pages/base_page.dart';
 import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_tracing_viewmodel.dart';
 import 'package:kanaji/viewmodels/tracing_viewmodel.dart';
@@ -8,7 +9,8 @@ import 'package:kanaji/views/widgets/grid_canvas.dart';
 import 'package:provider/provider.dart';
 
 class TracingPage extends StatelessWidget {
-  const TracingPage({super.key});
+  final String title;
+  const TracingPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,8 @@ class TracingPage extends StatelessWidget {
     final drawingVM = context.read<IDrawingCanvasViewModel>();
     vm.attachDrawingVM(drawingVM);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tracing Page')),
+    return BasePage(
+      title: title,
       body: Column(
         children: [
           Expanded(

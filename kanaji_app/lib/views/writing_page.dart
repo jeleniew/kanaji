@@ -1,6 +1,7 @@
 // writing_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:kanaji/pages/base_page.dart';
 import 'package:kanaji/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/viewmodels/tracing_viewmodel.dart';
@@ -9,7 +10,8 @@ import 'package:kanaji/views/widgets/grid_canvas.dart';
 import 'package:provider/provider.dart';
 
 class WritingPage extends StatelessWidget {
-  const WritingPage({super.key});
+  final String title;
+  const WritingPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +19,8 @@ class WritingPage extends StatelessWidget {
     final drawingVM = context.read<IDrawingCanvasViewModel>();
     vm.attachDrawingVM(drawingVM);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Writing Practice'),
-      ),
+    return BasePage(
+      title: title,
       body: Column(
         children: [
           Expanded(

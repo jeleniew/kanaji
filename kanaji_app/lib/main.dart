@@ -16,9 +16,6 @@ import 'package:kanaji/views/tracing_page.dart';
 import 'package:kanaji/views/writing_page.dart';
 import 'package:provider/provider.dart';
 import 'views/flashcards_page.dart';
-import 'package:kanaji/pages/memory_practice_page.dart';
-// import 'package:kanaji/pages/second_page.dart';
-
 import 'pages/home.dart';
 
 void main() async {
@@ -60,17 +57,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(),
-        '/tracing': (context) => TracingPage(),
-        '/flashcards': (context) => FlashcardsPage(),
-        '/memory_practice': (context) => WritingPage(),
-      },
-      builder: (context, child) {
-        return SafeArea(
-          bottom: true,
-          top: false,
-          child: child!,
-          );
+        '/': (context) => HomePage(title: 'Home'),
+        '/tracing': (context) => TracingPage(title: 'Tracing Page'),
+        '/flashcards': (context) => FlashcardsPage(title: 'FlashCards'),
+        '/memory_practice': (context) => WritingPage(title: 'Writing Practice'),
       },
     );
   }
