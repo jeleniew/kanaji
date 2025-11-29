@@ -76,6 +76,7 @@ class TracingPage extends StatelessWidget {
           if (isCorrect) ...[
             ElevatedButton(onPressed: vm.previous, child: Text('Previous')),
             ElevatedButton(onPressed: vm.next, child: Text('Next')),
+            ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),
           ] else ...[
             ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),
           ],

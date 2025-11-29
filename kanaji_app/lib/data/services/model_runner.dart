@@ -6,12 +6,13 @@ import 'package:kanaji/domain/entities/model.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 class ModelRunner implements IModelRunner{
-  final int numClasses = 5; // 'a', 'i', 'u', 'e', 'o'
   late Interpreter _interpreter;
+  late Model model;
 
   @override
   Future<void> loadModel(Model model) async {
     try {
+      this.model = model;
       _interpreter = await Interpreter.fromAsset(model.assetPath);
     } catch (e) {
       print("Error loading model: $e");
@@ -31,7 +32,7 @@ class ModelRunner implements IModelRunner{
       ),
     );
 
-    var output = List.generate(1, (_) => List.filled(numClasses, 0.0));
+    var output = List.generate(1, (_) => List.filled(model.numClasses, 0.0));
     _interpreter.run(inputTensor, output);
     final scores = output[0];
     final maxScore = scores.reduce((a, b) => a > b ? a : b);

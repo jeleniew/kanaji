@@ -74,6 +74,11 @@ flutter:
     - assets/ml_models/cnn_etl9g_5s_20e_nomargin_smooth_2v.tflite
     - assets/ml_models/cnn_etl9g_5s_20e_nomargin_smooth_simple.tflite
     - assets/ml_models/cnn_etl9g_5s_50e_nomargin_smooth_simple.tflite
+    - assets/ml_models/cnn_resnet50_5s_50e_nomargin_smooth_simple.tflite
+    - assets/ml_models/cnn_resnet50_5s_50e_nomargin_smooth_simple2.tflite
+    - assets/ml_models/cnn_resnet50_5s_50e_nomargin_smooth_simple224.tflite
+    - assets/ml_models/cnn_etl9g_hiragana_50e_nomargin_smooth_simple.tflite
+    - assets/ml_models/cnn_etl9g_46s_50e_nomargin_smooth_simple.tflite
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

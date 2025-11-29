@@ -6,4 +6,5 @@ abstract class IImageProcessingService {
   Future<Image> convertPointsToImage(List<List<Offset?>> strokes, Size canvasSize);
   Future<Float32List> processImage(ByteData inputImage);
   Future<Image> float32ListToImage(Float32List input, int width, int height);
+  // Float32List adjustToResnet(Float32List input);
 }

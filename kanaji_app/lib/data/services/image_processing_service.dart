@@ -76,7 +76,7 @@ class ImageProcessingService implements IImageProcessingService {
     int index = 0;
     for (int y = 0; y < 127; y++) {
       for (int x = 0; x < 128; x++) {
-        final gray = img.getLuminance(image.getPixel(x, y)).toDouble() / 255.0; // normalizacja [0,1]
+        final gray = img.getLuminance(image.getPixel(x, y)).toDouble() / 255.0; // normalize [0,1]
         floatList[index++] = gray;
       }
     }

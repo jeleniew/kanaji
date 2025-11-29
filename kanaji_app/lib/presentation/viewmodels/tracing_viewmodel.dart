@@ -104,7 +104,7 @@ class TracingViewModel extends ITracingViewModel {
     }
     print('AI Prediction matches: $maches out of ${(await result).length}');
     print('Expected character: ${character.glyph}');
-    final predictions = (await result).map((e) => e['prediction']).toList();
+    final predictions = (await result).map((e) => "${e['model']}: ${e['prediction']}").toList();
     print('Predicted characters: $predictions');
     if (maches >= (await result).length / 2) {
       _tracingResult = TracingResult.correct;

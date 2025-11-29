@@ -31,8 +31,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isAndroid || Platform.isIOS) {
-    await ModelPredictionService().init();
     DI().initDI();
+    await ModelPredictionService().init(DI().getIt<IImageProcessingService>());
   } else {
     print("AI does not work on desktop.");
   }
