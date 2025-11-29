@@ -7,6 +7,7 @@ abstract class IWritingViewModel extends ChangeNotifier {
   String get currentCharacter;
   TracingResult get tracingResult;
   String get hint;
+  Future<String> get currentCharacterSvg;
   void previous();
   void next();
   void check();

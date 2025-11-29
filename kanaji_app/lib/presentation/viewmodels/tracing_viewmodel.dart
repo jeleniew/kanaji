@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
+import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
@@ -18,6 +19,7 @@ class TracingViewModel extends ITracingViewModel {
   final IModelPredictionService _modelService;
   final IImageProcessingService _imageProcessingService;
   final IDrawingAnalyzerService _drawingAnalyzerService;
+  final IKanjiRepository _kanjiRepository;
   
   late IDrawingCanvasViewModel _drawingCanvasViewModel;
   TracingResult _tracingResult = TracingResult.none;
@@ -30,11 +32,13 @@ class TracingViewModel extends ITracingViewModel {
     required IModelPredictionService modelService,
     required IImageProcessingService imageProcessingService,
     required IDrawingAnalyzerService drawingAnalyzerService,
+    required IKanjiRepository kanjiRepository,
   }) :
     _characterRepository = characterRepository,
     _modelService = modelService,
     _imageProcessingService = imageProcessingService,
-    _drawingAnalyzerService = drawingAnalyzerService;
+    _drawingAnalyzerService = drawingAnalyzerService,
+    _kanjiRepository = kanjiRepository;
   @override
   void attachDrawingVM(IDrawingCanvasViewModel vm) {
     _drawingCanvasViewModel = vm;
@@ -70,11 +74,12 @@ class TracingViewModel extends ITracingViewModel {
   }
 
   @override
-  void check() {
+  void check() async{
     List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
 
     final character = _characterRepository.getCharacterByIndex(_currentIndex);
-    final result =  _drawingAnalyzerService.compare(expectedStrokes, character);
+    final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
+    final result =  _drawingAnalyzerService.comapre2(expectedStrokes, svgPathData);
 
     if (result) {
       _tracingResult = TracingResult.correct;

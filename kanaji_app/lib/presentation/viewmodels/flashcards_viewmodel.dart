@@ -16,7 +16,7 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
   String get currentCard =>
     _showingHiragana
     ? _characterRepository.getCharacterByIndex(_currentIndex).glyph
-    : _characterRepository.getCharacterByIndex(_currentIndex).definition;
+    : _characterRepository.getCharacterByIndex(_currentIndex).meaning;
 
   void _nextCard() {
     final length = _characterRepository.getCharacters().length;

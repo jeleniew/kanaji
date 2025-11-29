@@ -1,6 +1,7 @@
 // writing_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/presentation/views/base_page.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
@@ -27,6 +28,9 @@ class WritingPage extends StatelessWidget {
             child: Stack(
               children: [
                 // TODO: both should be the same size
+                // if (vm.hint.isNotEmpty)
+                //   _buildKanjiSvg(vm.currentCharacter, vm)
+                // else
                 GridCanvas(
                   character: vm.hint,
                 ),
@@ -74,6 +78,26 @@ class WritingPage extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+
+  FutureBuilder<String> _buildKanjiSvg(String kanji, IWritingViewModel vm) {
+    return FutureBuilder<String>(
+      future: vm.currentCharacterSvg,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error loading SVG');
+        } else {
+          final svgData = snapshot.data!;
+          return SvgPicture.string(
+            svgData,
+            width: 128,
+            height: 127,
+          );
+        }
+      },
     );
   }
 }

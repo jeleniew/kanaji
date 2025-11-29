@@ -29,4 +29,10 @@ Font source: https://www.nihilist.org.uk/
 
 See LICENSE-font.txt for details.
 
+## Kanji Data
+This project uses **KanjiVG**, a collection of SVGs for kanji characters.
+KanjiVG is copyright Ulrich Apel and released under the Creative Commons Attribution-Share Alike 3.0 licence:
+http://creativecommons.org/licenses/by-sa/3.0/
+KanjiVG repository: [https://github.com/KanjiVG/kanjivg](https://github.com/KanjiVG/kanjivg)
+See the file `COPYING` in the KanjiVG repository for more details.
 

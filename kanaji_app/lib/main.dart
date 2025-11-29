@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:kanaji/core/di/di.dart';
 import 'package:kanaji/data/services/model_service.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
+import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
@@ -60,6 +61,7 @@ void main() async {
             modelService: DI().getIt<IModelPredictionService>(),
             imageProcessingService: DI().getIt<IImageProcessingService>(),
             drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),
+            kanjiRepository: DI().getIt<IKanjiRepository>(),
           ),
         ),
         ChangeNotifierProvider<IDrawingCanvasViewModel>(
@@ -71,6 +73,7 @@ void main() async {
             modelService: DI().getIt<IModelPredictionService>(),
             imageProcessingService: DI().getIt<IImageProcessingService>(),
             drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),
+            kanjiRepository: DI().getIt<IKanjiRepository>(),
           ),
         ),
       ],
