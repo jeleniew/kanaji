@@ -8,12 +8,9 @@ class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({required IRouteRepository routeRepository})
       : _routeRepository = routeRepository;
 
-  String getRoute(AppRoute key) => _routeRepository.getRoute(key);
+  List<AppRoute> get routes => _routeRepository.getAllRoutes();
 
-  Map<AppRoute, String> get routes => _routeRepository.getAllRoutes();
-
-  void navigateTo(AppRoute routeName, BuildContext context) {
-    final route = getRoute(routeName);
-    Navigator.of(context).pushNamed(route);
+  void navigateTo(AppRoute appRoute, BuildContext context) {
+    Navigator.of(context).pushNamed(appRoute.path);
   }
 }

@@ -22,16 +22,16 @@ class AppDrawer extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            child: Text('Drawer Header'),
+            child: Text(''), // TODO
           ),
-          ...vm.routes.entries.map((entry) {
+          ...vm.routes.map((appRoute) {
             return ListTile(
-              title: Text(entry.key.toString()),
+              title: Text(appRoute.name),
               onTap: () {
-                Navigator.pushNamed(context, entry.value);
+                Navigator.pushNamed(context, appRoute.path);
               },
             );
-          }).toList(),
+          }),
         ],
       ),
     );

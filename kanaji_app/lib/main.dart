@@ -7,6 +7,7 @@ import 'package:kanaji/core/di/di.dart';
 import 'package:kanaji/data/services/model_service.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
+import 'package:kanaji/domain/services/i_configuration_service.dart';
 import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
@@ -14,15 +15,18 @@ import 'package:kanaji/domain/repositories/i_route_repository.dart';
 import 'package:kanaji/presentation/viewmodels/app_drawer_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/flashcards_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_flashcards_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/writing_viewmodel.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
+import 'package:kanaji/presentation/views/configuration_page.dart';
 import 'package:kanaji/presentation/views/tracing_page.dart';
 import 'package:kanaji/presentation/views/writing_page.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +57,11 @@ void main() async {
         ChangeNotifierProvider<IFlashcardsViewModel>(
           create: (_) => FlashcardsViewModel(
             characterRepository: DI().getIt<ICharacterRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<IConfigurationViewModel>(
+          create: (_) => ConfigurationViewModel(
+            configurationService: DI().getIt<IConfigurationService>(),
           ),
         ),
         ChangeNotifierProvider<ITracingViewModel>(
@@ -92,9 +101,14 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(title: 'Home'),
+        '/tracing_configuration': (context) => ConfigurationPage(
+          "Tracing",
+          '/tracing',
+        ),  // TODO: title
         '/tracing': (context) => TracingPage(title: 'Tracing Page'),
         '/flashcards': (context) => FlashcardsPage(title: 'FlashCards'),
-        '/memory_practice': (context) => WritingPage(title: 'Writing Practice'),
+        '/memory_practice': (context) => WritingPage(title: 'Memory Practice'),
+        // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
       },
     );
   }
