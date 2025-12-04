@@ -22,6 +22,7 @@ class TracingPage extends StatelessWidget {
       title: title,
       body: Column(
         children: [
+          Text("a", style: TextStyle(fontSize: 48),),
           Expanded(
             child: Stack(
               children: [
@@ -41,9 +42,8 @@ class TracingPage extends StatelessWidget {
               color: Colors.red,
               child: RawImage(image: vm.processedImage),
             ),
-          if (vm.tracingResult == TracingResult.none)
-            _buildActionBar(vm),
-            if (vm.tracingResult != TracingResult.none) _buildResultBar(vm),
+          if (vm.tracingResult == TracingResult.none) _buildActionBar(vm),
+          if (vm.tracingResult != TracingResult.none) _buildResultBar(vm),
         ],
       ),
     );
@@ -51,11 +51,16 @@ class TracingPage extends StatelessWidget {
 
   Widget _buildActionBar(ITracingViewModel vm) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        SizedBox(width: 8),
         ElevatedButton(onPressed: vm.clear, child: Text('Clear')),
+        SizedBox(width: 8),
         ElevatedButton(onPressed: vm.check, child: Text('Check')),
+        SizedBox(width: 8),
         ElevatedButton(onPressed: vm.checkAI, child: Text('Check AI')),
-        ElevatedButton(onPressed: vm.changeFont, child: Text('Font')),
+        // SizedBox(width: 8),
+        // ElevatedButton(onPressed: vm.changeFont, child: Text('Font')),
       ],
     );
   }
@@ -75,6 +80,7 @@ class TracingPage extends StatelessWidget {
           ),
           if (isCorrect) ...[
             ElevatedButton(onPressed: vm.previous, child: Text('Previous')),
+            SizedBox(width: 8),
             ElevatedButton(onPressed: vm.next, child: Text('Next')),
           ] else ...[
             ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),

@@ -72,7 +72,9 @@ class WritingPage extends StatelessWidget {
           ),
           if (isCorrect) ...[
             ElevatedButton(onPressed: vm.previous, child: Text('Previous')),
+            SizedBox(width: 8),
             ElevatedButton(onPressed: vm.next, child: Text('Next')),
+            ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),
           ] else ...[
             ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),
           ],

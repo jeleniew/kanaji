@@ -24,24 +24,14 @@ class ConfigurationPage extends StatelessWidget {
             child: 
             ListView(
               children: [
-                RadioListTile<TrainingMode>(
-                  title: const Text('Hiragana'),
-                  value: TrainingMode.hiragana,
-                  groupValue: vm.selectedMode,
-                  onChanged: (mode) => vm.selectMode(mode!),
-                ),
-                RadioListTile<TrainingMode>(
-                  title: const Text('Katakana'),
-                  value: TrainingMode.katakana,
-                  groupValue: vm.selectedMode,
-                  onChanged: (mode) => vm.selectMode(mode!),
-                ),
-                RadioListTile<TrainingMode>(
-                  title: const Text('Kanji'),
-                  value: TrainingMode.kanji,
-                  groupValue: vm.selectedMode,
-                  onChanged: (mode) => vm.selectMode(mode!),
-                ),
+                ...TrainingMode.values.map((mode) {
+                  return RadioListTile<TrainingMode>(
+                      title: Text(mode.displayName),
+                      value: mode,
+                      groupValue: vm.selectedMode,
+                      onChanged: (selectedMode) => vm.selectMode(selectedMode!),
+                    );
+                }),
               ],
             ),
           ),
