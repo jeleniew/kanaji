@@ -1,6 +1,7 @@
 // di.dart
 
 import 'package:get_it/get_it.dart';
+import 'package:kanaji/data/datasources/character_data_source.dart';
 import 'package:kanaji/data/repositories/kanji_repository.dart';
 import 'package:kanaji/data/services/configuration_service.dart';
 import 'package:kanaji/data/services/drawing_analyzer_service.dart';
@@ -8,6 +9,7 @@ import 'package:kanaji/data/services/image_processing_service.dart';
 import 'package:kanaji/data/services/model_service.dart';
 import 'package:kanaji/data/repositories/character_repository.dart';
 import 'package:kanaji/data/repositories/route_repository.dart';
+import 'package:kanaji/domain/datasources/i_character_data_source.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
@@ -20,12 +22,17 @@ class DI {
   final getIt = GetIt.instance;
 
   void initDI() {
+    getIt.registerLazySingleton<ICharacterDataSource>(() => CharacterDataSource());
+
+    getIt.registerLazySingleton<IConfigurationService>(() => ConfigurationService());
     getIt.registerLazySingleton<IRouteRepository>(() => RouteRepository());
-    getIt.registerLazySingleton<ICharacterRepository>(() => CharacterRepository());
+    getIt.registerLazySingleton<ICharacterRepository>(() => CharacterRepository(
+      configurationService: getIt<IConfigurationService>(),
+      characterDataSource: getIt<ICharacterDataSource>(),
+    ));
     getIt.registerLazySingleton<IModelPredictionService>(() => ModelPredictionService());
     getIt.registerLazySingleton<IImageProcessingService>(() => ImageProcessingService());
     getIt.registerLazySingleton<IDrawingAnalyzerService>(() => DrawingAnalyzerService());
     getIt.registerLazySingleton<IKanjiRepository>(() => KanjiRepository());
-    getIt.registerLazySingleton<IConfigurationService>(() => ConfigurationService());
   }
 }

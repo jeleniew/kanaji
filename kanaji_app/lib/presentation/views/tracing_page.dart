@@ -22,7 +22,7 @@ class TracingPage extends StatelessWidget {
       title: title,
       body: Column(
         children: [
-          Text("a", style: TextStyle(fontSize: 48),),
+          Text(vm.currentMeaning, style: TextStyle(fontSize: 48),),
           Expanded(
             child: Stack(
               children: [

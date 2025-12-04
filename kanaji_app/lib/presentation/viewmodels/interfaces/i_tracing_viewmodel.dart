@@ -6,6 +6,7 @@ import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewm
 
 abstract class ITracingViewModel extends ChangeNotifier {
   String get currentCharacter;
+  String get currentMeaning;
   String? get font;
   TracingResult get tracingResult;
   ui.Image? get processedImage;

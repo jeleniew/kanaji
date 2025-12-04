@@ -39,13 +39,19 @@ class TracingViewModel extends ITracingViewModel {
     _imageProcessingService = imageProcessingService,
     _drawingAnalyzerService = drawingAnalyzerService,
     _kanjiRepository = kanjiRepository;
+
   @override
   void attachDrawingVM(IDrawingCanvasViewModel vm) {
     _drawingCanvasViewModel = vm;
   }
 
   @override
-  String get currentCharacter => _characterRepository.getCharacterByIndex(_currentIndex).glyph;
+  String get currentCharacter =>
+    _characterRepository.getCharacterByIndex(_currentIndex).glyph;
+
+  @override
+  String get currentMeaning =>
+    _characterRepository.getCharacterByIndex(_currentIndex).meaning;
 
   @override
   String? get font => _isKanjiOrderFont ? 'KanjiStrokeOrder' : null;
@@ -79,7 +85,7 @@ class TracingViewModel extends ITracingViewModel {
 
     final character = _characterRepository.getCharacterByIndex(_currentIndex);
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
-    final result =  _drawingAnalyzerService.comapre2(expectedStrokes, svgPathData);
+    final result = _drawingAnalyzerService.comapre2(expectedStrokes, svgPathData);
 
     if (result) {
       _tracingResult = TracingResult.correct;
@@ -117,7 +123,8 @@ class TracingViewModel extends ITracingViewModel {
       _tracingResult = TracingResult.incorrect;
     }
     if (kDebugMode) {
-      _processedImage = await _imageProcessingService.float32ListToImage(floatInput, 128, 127);
+      _processedImage =
+      await _imageProcessingService.float32ListToImage(floatInput, 128, 127);
     }
     notifyListeners();
   }

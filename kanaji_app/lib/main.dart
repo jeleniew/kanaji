@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kanaji/core/di/di.dart';
 import 'package:kanaji/data/services/model_service.dart';
+import 'package:kanaji/domain/entities/training_mode.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
@@ -96,6 +97,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mode = context.watch<IConfigurationViewModel>().selectedMode;
+    final title = switch (mode) {
+      TrainingMode.hiragana => ' - Hiragana',
+      TrainingMode.katakana => ' - Katakana',
+      TrainingMode.kanji => ' - Kanji',
+      null => '',
+    };
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -105,9 +114,17 @@ class MyApp extends StatelessWidget {
           "Tracing",
           '/tracing',
         ),  // TODO: title
-        '/tracing': (context) => TracingPage(title: 'Tracing Page'),
-        '/flashcards': (context) => FlashcardsPage(title: 'FlashCards'),
-        '/memory_practice': (context) => WritingPage(title: 'Memory Practice'),
+        '/tracing': (context) => TracingPage(title: 'Tracing$title'),
+        '/flashcards_configuration': (context) => ConfigurationPage(
+          "Flashcards",
+          '/flashcards',
+        ),
+        '/flashcards': (context) => FlashcardsPage(title: 'Flashcards$title'),
+        '/writing_configuration': (context) => ConfigurationPage(
+          "Writing Practice",
+          '/writing',
+        ),
+        '/memory_practice': (context) => WritingPage(title: 'Memory Practice$title'),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
       },
     );

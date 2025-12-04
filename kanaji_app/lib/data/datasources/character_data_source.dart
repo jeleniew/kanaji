@@ -1,8 +1,10 @@
 // kana_data_source.dart
 
+import 'package:kanaji/domain/datasources/i_character_data_source.dart';
 import 'package:kanaji/domain/entities/character.dart';
 
-class CharacterDataSource {
+class CharacterDataSource implements ICharacterDataSource {
+  @override
   List<Character> getAllHiragana() {
     return [
       Character(glyph: 'あ', meaning: 'a'),
@@ -54,6 +56,7 @@ class CharacterDataSource {
     ];
   }
 
+  @override
   List<Character> getAllKatakana() {
     return [
       Character(glyph: 'ア', meaning: 'a'),
@@ -105,6 +108,7 @@ class CharacterDataSource {
     ];
   }
 
+  @override
   List<Character> getAllKanji() {
     return [];
   }
