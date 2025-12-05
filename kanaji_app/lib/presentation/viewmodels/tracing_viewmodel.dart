@@ -11,10 +11,10 @@ import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
-import 'package:kanaji/presentation/viewmodels/interfaces/i_tracing_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 
 
-class TracingViewModel extends ITracingViewModel {
+class TracingViewModel extends IWritingViewModel {
   final ICharacterRepository _characterRepository;
   final IModelPredictionService _modelService;
   final IImageProcessingService _imageProcessingService;
@@ -53,13 +53,13 @@ class TracingViewModel extends ITracingViewModel {
   String get currentMeaning =>
     _characterRepository.getCharacterByIndex(_currentIndex).meaning;
 
-  @override
+  // TODO: use hint to show order
   String? get font => _isKanjiOrderFont ? 'KanjiStrokeOrder' : null;
 
   @override
   TracingResult get tracingResult => _tracingResult;
 
-  @override
+  // TODO: use only for debugging
   ui.Image? get processedImage => _processedImage;
   
   @override
@@ -130,7 +130,7 @@ class TracingViewModel extends ITracingViewModel {
   }
 
   @override
-  void changeFont() {
+  void showHint() {
     _isKanjiOrderFont = !_isKanjiOrderFont;
     notifyListeners();
   }

@@ -21,15 +21,15 @@ import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewm
 import 'package:kanaji/presentation/viewmodels/interfaces/i_flashcards_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_tracing_viewmodel.dart';
-import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_practice_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
-import 'package:kanaji/presentation/viewmodels/writing_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
 import 'package:kanaji/presentation/views/configuration_page.dart';
 import 'package:kanaji/presentation/views/tracing_page.dart';
-import 'package:kanaji/presentation/views/writing_page.dart';
+import 'package:kanaji/presentation/views/practice_page.dart';
 import 'package:provider/provider.dart';
 import 'presentation/views/flashcards_page.dart';
 
@@ -65,7 +65,7 @@ void main() async {
             configurationService: DI().getIt<IConfigurationService>(),
           ),
         ),
-        ChangeNotifierProvider<ITracingViewModel>(
+        ChangeNotifierProvider<TracingViewModel>(
           create: (_) => TracingViewModel(
             characterRepository: DI().getIt<ICharacterRepository>(),
             modelService: DI().getIt<IModelPredictionService>(),
@@ -77,8 +77,8 @@ void main() async {
         ChangeNotifierProvider<IDrawingCanvasViewModel>(
           create: (_) => DrawingCanvasViewModel()
         ),
-        ChangeNotifierProvider<IWritingViewModel>(
-          create: (_) => WritingViewModel(
+        ChangeNotifierProvider<PracticeViewModel>(
+          create: (_) => PracticeViewModel(
             characterRepository: DI().getIt<ICharacterRepository>(),
             modelService: DI().getIt<IModelPredictionService>(),
             imageProcessingService: DI().getIt<IImageProcessingService>(),
@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
           "Memory Practice",
           '/memory_practice',
         ),
-        '/memory_practice': (context) => WritingPage(title: 'Memory Practice$title'),
+        '/memory_practice': (context) => PracticePage(title: 'Memory Practice$title'),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
       },
     );

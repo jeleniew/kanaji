@@ -1,0 +1,44 @@
+// writing_page.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
+import 'package:kanaji/presentation/views/widgets/drawing_canvas.dart';
+import 'package:kanaji/presentation/views/widgets/grid_canvas.dart';
+import 'package:kanaji/presentation/views/writing_page.dart';
+
+class PracticePage extends StatelessWidget {
+  final String title;
+  const PracticePage({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return WritingPage<PracticeViewModel>(
+      title: title,
+      gridBuilder: (vm) => GridCanvas(
+        character: vm.hint,
+      ),
+      drawingBuilder: (vm) => DrawingCanvas(),
+    );
+  }
+
+  // FutureBuilder<String> _buildKanjiSvg(String kanji, IPracticeViewModel vm) {
+  //   return FutureBuilder<String>(
+  //     future: vm.currentCharacterSvg,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return CircularProgressIndicator();
+  //       } else if (snapshot.hasError) {
+  //         return Text('Error loading SVG');
+  //       } else {
+  //         final svgData = snapshot.data!;
+  //         return SvgPicture.string(
+  //           svgData,
+  //           width: 128,
+  //           height: 127,
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
+}

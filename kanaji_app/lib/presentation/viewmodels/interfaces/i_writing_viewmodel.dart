@@ -3,15 +3,15 @@ import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 
 abstract class IWritingViewModel extends ChangeNotifier {
-  void attachDrawingVM(IDrawingCanvasViewModel vm);
   String get currentCharacter;
+  String get currentMeaning;
   TracingResult get tracingResult;
-  String get hint;
-  Future<String> get currentCharacterSvg;
-  void previous();
-  void next();
+
+  void attachDrawingVM(IDrawingCanvasViewModel vm);
+  void clear();
   void check();
   void checkAI();
-  void clear();
+  void previous();
+  void next();
   void showHint();
 }

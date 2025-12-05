@@ -13,7 +13,7 @@ import 'package:kanaji/domain/services/i_model_prediction_service.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 
-class WritingViewModel extends IWritingViewModel {
+class PracticeViewModel extends IWritingViewModel {
   final ICharacterRepository _characterRepository;
   final IModelPredictionService _modelService;
   final IImageProcessingService _imageProcessingService;
@@ -26,7 +26,7 @@ class WritingViewModel extends IWritingViewModel {
   String _hint = "";
   late Future<String> _currentCharacterSvg;
 
-  WritingViewModel({
+  PracticeViewModel({
     required ICharacterRepository characterRepository,
     required IModelPredictionService modelService,
     required IImageProcessingService imageProcessingService,
@@ -49,12 +49,14 @@ class WritingViewModel extends IWritingViewModel {
     _characterRepository.getCharacterByIndex(_currentIndex).glyph;
 
   @override
+  String get currentMeaning =>
+    _characterRepository.getCharacterByIndex(_currentIndex).meaning;
+
+  @override
   TracingResult get tracingResult => _tracingResult;
 
-  @override
   String get hint => _hint;
 
-  @override
   Future<String> get currentCharacterSvg {
     _currentCharacterSvg = _kanjiRepository.getSvgByKanji(currentCharacter);
     return _currentCharacterSvg;

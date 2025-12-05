@@ -72,11 +72,11 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
       final referenceStrokeLength = _pathLength(referenceStroke);
 
       // TODO: tune threshold
-      final lengthRatioThreshold = 0.5;
+      final lengthRatioThreshold = 0.75;
 
       if (userStrokeLength/referenceStrokeLength < (1 - lengthRatioThreshold) ||
           userStrokeLength/referenceStrokeLength > (1 + lengthRatioThreshold)) {
-        print("Stroke $i length mismatch:");
+        print("Stroke $i length mismatch: ${userStrokeLength/referenceStrokeLength}");
         print("User stroke length: $userStrokeLength");
         print("Reference stroke length: $referenceStrokeLength");
         return false;
