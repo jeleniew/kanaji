@@ -121,8 +121,8 @@ class MyApp extends StatelessWidget {
         ),
         '/flashcards': (context) => FlashcardsPage(title: 'Flashcards$title'),
         '/memory_practice_configuration': (context) => ConfigurationPage(
-          "Writing Practice",
-          '/writing',
+          "Memory Practice",
+          '/memory_practice',
         ),
         '/memory_practice': (context) => WritingPage(title: 'Memory Practice$title'),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
