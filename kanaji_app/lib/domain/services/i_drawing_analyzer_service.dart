@@ -3,5 +3,5 @@
 import 'dart:ui';
 
 abstract class IDrawingAnalyzerService {
-  bool comapre2(List<List<Offset>> userStrokes, String svgPathData);
+  bool compare(List<List<Offset>> userStrokes, String svgPathData);
 }

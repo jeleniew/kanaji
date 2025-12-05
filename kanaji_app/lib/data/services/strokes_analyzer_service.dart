@@ -8,9 +8,9 @@ import 'package:xml/xml.dart';
 // TODO: in 'ta' character 3rd and 4th storke was switched and still was correct
 // TODO: 'chi' in incorect in my test
 
-class DrawingAnalyzerService implements IDrawingAnalyzerService {
+class StrokesAnalyzerService implements IDrawingAnalyzerService {
   static const double _threshold = 0.35;
-  static const int _resamplePoints = 64;
+  static const int _resamplePoints = 16;
 
   List<String> _extractPaths(String svgData) {
     final document = XmlDocument.parse(svgData);
@@ -48,12 +48,8 @@ class DrawingAnalyzerService implements IDrawingAnalyzerService {
   @override
   bool compare(List<List<Offset>> userStrokes, String svgPathData) {
     List<List<Offset>> referenceStrokes = _svgPathToPoints(svgPathData);
-    // TODO: is this the best way to debug stroke count mismatch?
+    
     if (userStrokes.length != referenceStrokes.length) {
-      for (var stroke in userStrokes) {
-        print("User stroke length: ${stroke.length}");
-        print("Stroke: ${stroke}");
-      }
       return false;
     }
 
@@ -68,13 +64,37 @@ class DrawingAnalyzerService implements IDrawingAnalyzerService {
     final normalizedUser = _normalize(userStrokes);
     final normalizedReference = _normalize(referenceStrokes);
 
-    // TODO: how many samples?
-    final sampledUser = _resampleAllStrokes(normalizedUser, _resamplePoints);
-    final sampledReference = _resampleAllStrokes(normalizedReference, _resamplePoints);
+    for (int i = 0; i < normalizedUser.length; i++) {
+      final userStroke = normalizedUser[i];
+      final referenceStroke = normalizedReference[i];
 
-    final distance = _pathDistance2(sampledUser, sampledReference);
+      final userStrokeLength = _pathLength(userStroke);
+      final referenceStrokeLength = _pathLength(referenceStroke);
 
-    return distance < _threshold;
+      // TODO: tune threshold
+      final lengthRatioThreshold = 0.5;
+
+      if (userStrokeLength/referenceStrokeLength < (1 - lengthRatioThreshold) ||
+          userStrokeLength/referenceStrokeLength > (1 + lengthRatioThreshold)) {
+        print("Stroke $i length mismatch:");
+        print("User stroke length: $userStrokeLength");
+        print("Reference stroke length: $referenceStrokeLength");
+        return false;
+      }
+
+      final int sampleNumber = (userStrokeLength > referenceStrokeLength ? userStrokeLength : referenceStrokeLength) ~/ 0.1;
+
+      final sampledUserStroke = _resample(userStroke, sampleNumber);
+      final sampledReferenceStroke = _resample(referenceStroke, sampleNumber);
+
+      final strokeDistance = _pathDistance(sampledUserStroke, sampledReferenceStroke);
+
+      if (strokeDistance > _threshold) {
+        print("Stroke $i distance too high: $strokeDistance");
+        return false;
+      }
+    }
+    return true;
   }
 
   List<List<Offset>> _normalize(List<List<Offset>> strokes) {
@@ -155,10 +175,6 @@ class DrawingAnalyzerService implements IDrawingAnalyzerService {
     return resampled;
   }
 
-  List<List<Offset>> _resampleAllStrokes(List<List<Offset>> strokes, int n) {
-    return strokes.map((stroke) => _resample(stroke, n)).toList();
-  }
-
   double _pathLength(List<Offset> stroke) {
     double length = 0.0;
     for (int i = 1; i < stroke.length; i++) {
@@ -171,15 +187,6 @@ class DrawingAnalyzerService implements IDrawingAnalyzerService {
     double distance = 0.0;
     for (int i = 0; i < a.length; i++) {
       distance += (a[i] - b[i]).distance;
-    }
-    return distance / a.length;
-  }
-
-  double _pathDistance2(List<List<Offset>> a, List<List<Offset>> b) {
-    // TODO: check lengths
-    double distance = 0.0;
-    for (int i = 0; i < a.length; i++) {
-      distance += _pathDistance(a[i], b[i]);
     }
     return distance / a.length;
   }

@@ -9,6 +9,7 @@ import 'package:kanaji/data/services/image_processing_service.dart';
 import 'package:kanaji/data/services/model_service.dart';
 import 'package:kanaji/data/repositories/character_repository.dart';
 import 'package:kanaji/data/repositories/route_repository.dart';
+import 'package:kanaji/data/services/strokes_analyzer_service.dart';
 import 'package:kanaji/domain/datasources/i_character_data_source.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
@@ -32,7 +33,8 @@ class DI {
     ));
     getIt.registerLazySingleton<IModelPredictionService>(() => ModelPredictionService());
     getIt.registerLazySingleton<IImageProcessingService>(() => ImageProcessingService());
-    getIt.registerLazySingleton<IDrawingAnalyzerService>(() => DrawingAnalyzerService());
+    // getIt.registerLazySingleton<IDrawingAnalyzerService>(() => DrawingAnalyzerService());
+      getIt.registerLazySingleton<IDrawingAnalyzerService>(() => StrokesAnalyzerService());
     getIt.registerLazySingleton<IKanjiRepository>(() => KanjiRepository());
   }
 }

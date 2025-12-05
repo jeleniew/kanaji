@@ -85,7 +85,7 @@ class TracingViewModel extends ITracingViewModel {
 
     final character = _characterRepository.getCharacterByIndex(_currentIndex);
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
-    final result = _drawingAnalyzerService.comapre2(expectedStrokes, svgPathData);
+    final result = _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
 
     if (result) {
       _tracingResult = TracingResult.correct;
