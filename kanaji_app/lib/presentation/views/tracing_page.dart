@@ -1,6 +1,7 @@
 // tracing_page.dart
 import 'package:flutter/material.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
+import 'package:kanaji/presentation/views/widgets/combined_canvas.dart';
 import 'package:kanaji/presentation/views/widgets/drawing_canvas.dart';
 import 'package:kanaji/presentation/views/widgets/grid_canvas.dart';
 import 'package:kanaji/presentation/views/writing_page.dart';
@@ -13,11 +14,18 @@ class TracingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return WritingPage<TracingViewModel>(
       title: title,
-      gridBuilder: (vm) => GridCanvas(
-        character: vm.currentCharacter,
-        svgData: vm.currentCharacterSvg,
+      gridBuilder: (vm) => CombinedCanvas(
+        grid: GridCanvas(
+          character: vm.currentCharacter,
+          svgData: vm.currentCharacterSvg,
+        ),
+        drawing: DrawingCanvas(),
       ),
-      drawingBuilder: (vm) => DrawingCanvas(),
+      // GridCanvas(
+      //   character: vm.currentCharacter,
+      //   svgData: vm.currentCharacterSvg,
+      // ),
+      drawingBuilder: (vm) => SizedBox.shrink(),//rawingCanvas(),
     );
   }
 }

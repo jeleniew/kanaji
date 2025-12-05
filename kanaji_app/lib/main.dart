@@ -20,8 +20,6 @@ import 'package:kanaji/presentation/viewmodels/interfaces/i_configuration_viewmo
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_flashcards_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_home_viewmodel.dart';
-import 'package:kanaji/presentation/viewmodels/interfaces/i_tracing_viewmodel.dart';
-import 'package:kanaji/presentation/viewmodels/interfaces/i_practice_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
@@ -38,10 +36,11 @@ void main() async {
 
   if (Platform.isAndroid || Platform.isIOS) {
     await ModelPredictionService().init();
-    DI().initDI();
   } else {
     print("AI does not work on desktop.");
   }
+  
+  DI().initDI();
 
   runApp(
     // TODO: user context.watch insead of provider

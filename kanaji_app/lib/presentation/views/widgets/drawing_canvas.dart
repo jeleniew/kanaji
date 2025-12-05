@@ -9,12 +9,14 @@ class DrawingCanvas extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<IDrawingCanvasViewModel>(context);
-    return GestureDetector(
-      onPanUpdate: (details) => vm.addPoints(details.localPosition),
-      onPanEnd: (details) => vm.endStroke(),
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: DrawingPainter(strokes: vm.strokes),
+    return ClipRect(
+      child:GestureDetector(
+        onPanUpdate: (details) => vm.addPoints(details.localPosition),
+        onPanEnd: (details) => vm.endStroke(),
+        child: CustomPaint(
+          size: Size.infinite,
+          painter: DrawingPainter(strokes: vm.strokes),
+        ),
       ),
     );
   }
