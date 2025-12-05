@@ -25,7 +25,7 @@ class TracingViewModel extends IWritingViewModel {
   TracingResult _tracingResult = TracingResult.none;
   ui.Image? _processedImage;
   int _currentIndex = 0;
-  bool _isKanjiOrderFont = true;
+  late Future<String> _currentCharacterSvg;
 
   TracingViewModel({
     required ICharacterRepository characterRepository,
@@ -53,8 +53,11 @@ class TracingViewModel extends IWritingViewModel {
   String get currentMeaning =>
     _characterRepository.getCharacterByIndex(_currentIndex).meaning;
 
-  // TODO: use hint to show order
-  String? get font => _isKanjiOrderFont ? 'KanjiStrokeOrder' : null;
+  Future<String> get currentCharacterSvg {
+    _currentCharacterSvg = _kanjiRepository.getSvgByKanji(currentCharacter);
+    return _currentCharacterSvg;
+  }
+
 
   @override
   TracingResult get tracingResult => _tracingResult;
@@ -131,7 +134,7 @@ class TracingViewModel extends IWritingViewModel {
 
   @override
   void showHint() {
-    _isKanjiOrderFont = !_isKanjiOrderFont;
+    // TODO
     notifyListeners();
   }
 

@@ -23,8 +23,7 @@ class PracticeViewModel extends IWritingViewModel {
   int _currentIndex = 0;
   late IDrawingCanvasViewModel _drawingCanvasViewModel;
   TracingResult _tracingResult = TracingResult.none;
-  String _hint = "";
-  late Future<String> _currentCharacterSvg;
+  Future<String>? _currentCharacterSvg;
 
   PracticeViewModel({
     required ICharacterRepository characterRepository,
@@ -55,12 +54,7 @@ class PracticeViewModel extends IWritingViewModel {
   @override
   TracingResult get tracingResult => _tracingResult;
 
-  String get hint => _hint;
-
-  Future<String> get currentCharacterSvg {
-    _currentCharacterSvg = _kanjiRepository.getSvgByKanji(currentCharacter);
-    return _currentCharacterSvg;
-  }
+  Future<String>? get currentCharacterSvg => _currentCharacterSvg;
 
   @override
   void previous() {
@@ -134,11 +128,12 @@ class PracticeViewModel extends IWritingViewModel {
 
   @override
   void showHint() {
-    _hint = _characterRepository.getCharacterByIndex(_currentIndex).glyph;
+    _currentCharacterSvg =
+      _kanjiRepository.getSvgByKanji(currentCharacter);
     notifyListeners();
 
     Future.delayed(const Duration(milliseconds: 1000), () {
-      _hint = "";
+      _currentCharacterSvg = null;
       notifyListeners();
     });
   }
