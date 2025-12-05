@@ -1,4 +1,5 @@
 // flashcard_view.dart
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardView extends StatelessWidget {
@@ -68,18 +69,20 @@ class FlashcardView extends StatelessWidget {
   }
 
   Widget _buildMainCard(double offset, double mainCardSize, String text) {
+    final fontSize = (mainCardSize * 0.8).floorToDouble();
+    final minFontSize = 10.0;
+
     return _card(
       offset: offset,
       cardSize: mainCardSize,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final fontSize = constraints.maxHeight * 0.8;
-          return Text(
-            text,
-            textAlign: TextAlign.center,
-            style: _textStyle(fontSize),
-          );
-        },
+      child: AutoSizeText(
+        text,
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        style: _textStyle(fontSize),
+        minFontSize: minFontSize,
+        maxFontSize: fontSize,
+        stepGranularity: 1,
       ),
     );
   }
