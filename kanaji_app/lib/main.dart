@@ -120,7 +120,7 @@ class MyApp extends StatelessWidget {
           '/flashcards',
         ),
         '/flashcards': (context) => FlashcardsPage(title: 'Flashcards$title'),
-        '/writing_configuration': (context) => ConfigurationPage(
+        '/memory_practice_configuration': (context) => ConfigurationPage(
           "Writing Practice",
           '/writing',
         ),
