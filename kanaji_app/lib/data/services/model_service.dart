@@ -33,7 +33,7 @@ class ModelPredictionService implements IModelPredictionService {
     for (var model in runners) {
       try {
         var predictedIdx = await model.predict(inputData);
-        var prediction = CharacterDataSource().characters[predictedIdx].glyph;
+        var prediction = CharacterDataSource().getAllHiragana()[predictedIdx].glyph;
         results.add({"model": "TODO", "prediction": prediction});
       } catch (e) {
         print("Prediction failed for model ${"TODO"}: $e");

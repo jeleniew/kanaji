@@ -1,7 +1,11 @@
 // app_route.dart
 
-enum AppRoute {
-  tracing,
-  flashcards,
-  memoryPractice,
+class AppRoute {
+  final String name;
+  final String path;
+
+  AppRoute({
+    required this.name,
+    required this.path,
+  });
 }

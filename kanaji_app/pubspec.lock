@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.12.0"
+  auto_size_text:
+    dependency: "direct main"
+    description:
+      name: auto_size_text
+      sha256: "3f5261cd3fb5f2a9ab4e2fc3fba84fd9fcaac8821f20a1d4e71f557521b22599"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -220,7 +228,7 @@ packages:
     source: hosted
     version: "1.9.1"
   path_parsing:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_parsing
       sha256: "883402936929eac138ee0a45da5b0f2c80f89913e6dc3bf77eb65b84b409c6ca"
@@ -360,6 +368,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  svg_path_parser:
+    dependency: "direct main"
+    description:
+      name: svg_path_parser
+      sha256: adff09b1099a0c9e0dc81e1975de70999889f825c1a2e8e9139bab03464a3657
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   term_glyph:
     dependency: transitive
     description:
@@ -404,10 +420,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics_codec
-      sha256: "99fd9fbd34d9f9a32efd7b6a6aae14125d8237b10403b422a6a6dfeac2806146"
+      sha256: c86987475f162fadff579e7320c7ddda04cd2fdeffbe1129227a85d9ac9e03da
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.13"
+    version: "1.1.11+1"
   vector_graphics_compiler:
     dependency: transitive
     description:
@@ -417,7 +433,7 @@ packages:
     source: hosted
     version: "1.1.19"
   vector_math:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: vector_math
       sha256: d530bd74fea330e6e364cda7a85019c434070188383e1cd8d9777ee586914c5b
@@ -449,7 +465,7 @@ packages:
     source: hosted
     version: "1.1.0"
   xml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: xml
       sha256: b015a8ad1c488f66851d762d3090a21c600e479dc75e68328c52774040cf9226

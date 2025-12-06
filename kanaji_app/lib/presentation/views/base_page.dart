@@ -1,6 +1,6 @@
 // base_page.dart
 import 'package:flutter/material.dart';
-import 'package:kanaji/presentation/views/widgets/app_drawer.dart';
+import 'package:kanaji/presentation/views/app_drawer.dart';
 
 class BasePage extends StatelessWidget {
   final String title;

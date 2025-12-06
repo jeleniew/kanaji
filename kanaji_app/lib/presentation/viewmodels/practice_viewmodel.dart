@@ -6,33 +6,37 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
+import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 
-class WritingViewModel extends IWritingViewModel {
+class PracticeViewModel extends IWritingViewModel {
   final ICharacterRepository _characterRepository;
   final IModelPredictionService _modelService;
   final IImageProcessingService _imageProcessingService;
   final IDrawingAnalyzerService _drawingAnalyzerService;
+  final IKanjiRepository _kanjiRepository;
 
   int _currentIndex = 0;
   late IDrawingCanvasViewModel _drawingCanvasViewModel;
   TracingResult _tracingResult = TracingResult.none;
-  String _hint = "";
+  Future<String>? _currentCharacterSvg;
 
-  WritingViewModel({
+  PracticeViewModel({
     required ICharacterRepository characterRepository,
     required IModelPredictionService modelService,
     required IImageProcessingService imageProcessingService,
     required IDrawingAnalyzerService drawingAnalyzerService,
+    required IKanjiRepository kanjiRepository,
   }) :
     _characterRepository = characterRepository,
     _modelService = modelService,
     _imageProcessingService = imageProcessingService,
-    _drawingAnalyzerService = drawingAnalyzerService;
+    _drawingAnalyzerService = drawingAnalyzerService,
+    _kanjiRepository = kanjiRepository;
 
   @override
   void attachDrawingVM(IDrawingCanvasViewModel vm) {
@@ -44,10 +48,13 @@ class WritingViewModel extends IWritingViewModel {
     _characterRepository.getCharacterByIndex(_currentIndex).glyph;
 
   @override
-  TracingResult get tracingResult => _tracingResult;
+  String get currentMeaning =>
+    _characterRepository.getCharacterByIndex(_currentIndex).meaning;
 
   @override
-  String get hint => _hint;
+  TracingResult get tracingResult => _tracingResult;
+
+  Future<String>? get currentCharacterSvg => _currentCharacterSvg;
 
   @override
   void previous() {
@@ -66,11 +73,12 @@ class WritingViewModel extends IWritingViewModel {
   }
 
   @override
-  void check() {
+  void check() async {
     List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
 
     final character = _characterRepository.getCharacterByIndex(_currentIndex);
-    final result =  _drawingAnalyzerService.compare(expectedStrokes, character);
+    final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
+    final result =  _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
 
     if (result) {
       _tracingResult = TracingResult.correct;
@@ -120,11 +128,12 @@ class WritingViewModel extends IWritingViewModel {
 
   @override
   void showHint() {
-    _hint = _characterRepository.getCharacterByIndex(_currentIndex).glyph;
+    _currentCharacterSvg =
+      _kanjiRepository.getSvgByKanji(currentCharacter);
     notifyListeners();
 
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _hint = "";
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      _currentCharacterSvg = null;
       notifyListeners();
     });
   }

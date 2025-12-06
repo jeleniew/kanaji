@@ -3,6 +3,5 @@
 import 'package:kanaji/domain/entities/app_route.dart';
 
 abstract class IRouteRepository {
-  String getRoute(AppRoute key);
-  Map<AppRoute, String> getAllRoutes();
+  List<AppRoute> getAllRoutes();
 }

@@ -1,2 +1,2 @@
-// traceing_result.dart
+// tracing_result.dart
 enum TracingResult {none, correct, incorrect}
