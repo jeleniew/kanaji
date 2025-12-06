@@ -1,21 +1,56 @@
 // tracing_page.dart
 import 'package:flutter/material.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
+import 'package:kanaji/presentation/viewmodels/drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/presentation/views/base_page.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
+import 'package:kanaji/presentation/views/widgets/combined_canvas.dart';
 import 'package:provider/provider.dart';
 
-class WritingPage<T extends IWritingViewModel> extends StatelessWidget {
+class WritingPage<T extends IWritingViewModel> extends StatefulWidget {
   final String title;
-  final Widget Function(T vm) gridBuilder;
-  final Widget Function(T vm) drawingBuilder;
+  final CombinedCanvas Function(T vm) canvas;
 
   const WritingPage({
     super.key,
     required this.title,
-    required this.gridBuilder,
-    required this.drawingBuilder
+    required this.canvas,
+  });
+  
+  @override
+  State<StatefulWidget> createState() => _WritingPageState<T>();
+}
+
+class _WritingPageState<T extends IWritingViewModel> extends State<WritingPage<T>> {
+  late final IDrawingCanvasViewModel _drawingCanvasViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _drawingCanvasViewModel = DrawingCanvasViewModel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<IDrawingCanvasViewModel>.value(
+      value: _drawingCanvasViewModel,
+      child: _InternalWritingPage<T>(
+        title: widget.title,
+        canvas: widget.canvas,
+      ),
+    );
+  }
+}
+
+class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget {
+  final String title;
+  final CombinedCanvas Function(T vm) canvas;
+
+  const _InternalWritingPage({
+    super.key,
+    required this.title,
+    required this.canvas
   });
 
   @override
@@ -30,12 +65,7 @@ class WritingPage<T extends IWritingViewModel> extends StatelessWidget {
         children: [
           Text(vm.currentMeaning, style: TextStyle(fontSize: 48),),
           Expanded(
-            child: Stack(
-              children: [
-                gridBuilder(vm),
-                drawingBuilder(vm),
-              ],
-            ),
+            child: canvas(vm),
           ),
           // if (vm.processedImage != null)
           //   Container(

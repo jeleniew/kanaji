@@ -73,9 +73,6 @@ void main() async {
             kanjiRepository: DI().getIt<IKanjiRepository>(),
           ),
         ),
-        ChangeNotifierProvider<IDrawingCanvasViewModel>(
-          create: (_) => DrawingCanvasViewModel()
-        ),
         ChangeNotifierProvider<PracticeViewModel>(
           create: (_) => PracticeViewModel(
             characterRepository: DI().getIt<ICharacterRepository>(),

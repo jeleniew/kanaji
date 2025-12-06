@@ -14,18 +14,13 @@ class TracingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return WritingPage<TracingViewModel>(
       title: title,
-      gridBuilder: (vm) => CombinedCanvas(
+      canvas: (vm) => CombinedCanvas(
         grid: GridCanvas(
           character: vm.currentCharacter,
           svgData: vm.currentCharacterSvg,
         ),
         drawing: DrawingCanvas(),
       ),
-      // GridCanvas(
-      //   character: vm.currentCharacter,
-      //   svgData: vm.currentCharacterSvg,
-      // ),
-      drawingBuilder: (vm) => SizedBox.shrink(),//rawingCanvas(),
     );
   }
 }
