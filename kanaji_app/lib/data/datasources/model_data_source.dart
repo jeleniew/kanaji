@@ -1,16 +1,13 @@
 // model_static_data_source.dart
 
 import 'package:kanaji/domain/entities/model.dart';
+import 'package:kanaji/domain/entities/training_mode.dart';
 
 class ModelDataSource {
   List<Model> get models => [
-    // Model(name: "model1", assetPath: 'assets/ml_models/cnn_etl9b_4s_20e_rev.tflite'),
-    Model(name: "model2", assetPath: 'assets/ml_models/cnn_etl9b_4s_20e_rev_cut.tflite'),
-    Model(name: "model3", assetPath: 'assets/ml_models/cnn_etl9b_4s_20e_rev_cut_bw.tflite'),
-    // Model(name: "model4", assetPath: 'assets/ml_models/cnn_etl9b_4s_20e.tflite'),
-    Model(name: "model5", assetPath: 'assets/ml_models/cnn_etl9g_5s_20e_nomargin_smooth.tflite'),
-    Model(name: "model6", assetPath: 'assets/ml_models/cnn_etl9g_5s_20e_nomargin_smooth_2v.tflite'),
-    Model(name: "model7", assetPath: 'assets/ml_models/cnn_etl9g_5s_20e_nomargin_smooth_simple.tflite'),
-    Model(name: "model8", assetPath: 'assets/ml_models/cnn_etl9g_5s_50e_nomargin_smooth_simple.tflite'),
+    Model(name: "hiragana", assetPath: 'assets/ml_models/cnn_etl9g_hiragana_50e_nomargin_smooth_simple.tflite', numClasses: 46, trainingMode: TrainingMode.hiragana),
+    Model(name: "katakana", assetPath: 'assets/ml_models/cnn_etl9g_katakana_50e_nomargin_smooth_simple.tflite', numClasses: 46),
+    Model(name: "kanji_grade1_missing", assetPath: 'assets/ml_models/cnn_etl9g_79s_50e_nomargin_smooth_simple.tflite', numClasses: 79, trainingMode: TrainingMode.kanji), // works but character for 'right' is missing
+    Model(name: "kanji_grade1", assetPath: 'assets/ml_models/cnn_etl9g_80s_50e_nomargin_smooth_simple.tflite', numClasses: 80, trainingMode: TrainingMode.kanji),
   ];
 }

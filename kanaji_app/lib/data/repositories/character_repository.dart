@@ -31,4 +31,9 @@ class CharacterRepository implements ICharacterRepository {
     final list = getCharacters();
     return list[index];
   }
+
+  @override
+  TrainingMode? getCurrentTrainingMode() {
+    return _configurationService.selectedMode;
+  }
 }

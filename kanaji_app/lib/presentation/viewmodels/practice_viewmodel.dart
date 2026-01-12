@@ -96,7 +96,10 @@ class PracticeViewModel extends IWritingViewModel {
     final Float32List floatInput =
       await _imageProcessingService.processImage(byteData!);
 
-    final result = _modelService.predictAllModels(floatInput);
+    final result = _modelService.predictAllModels(
+      floatInput,
+      _characterRepository.getCurrentTrainingMode()
+    );
 
     final character = _characterRepository.getCharacterByIndex(_currentIndex);
     int maches = 0;
