@@ -51,7 +51,7 @@ class TracingViewModel extends IWritingViewModel {
 
   @override
   String get currentMeaning =>
-    _characterRepository.getCharacterByIndex(_currentIndex).meaning;
+    _characterRepository.getCharacterByIndex(_currentIndex).meaning.join(', ');
 
   Future<String> get currentCharacterSvg {
     _currentCharacterSvg = _kanjiRepository.getSvgByKanji(currentCharacter);

@@ -1,0 +1,6 @@
+ipykernel
+tensorflow==2.20.0
+opencv-python
+scikit-learn
+dotenv
+matplotlib

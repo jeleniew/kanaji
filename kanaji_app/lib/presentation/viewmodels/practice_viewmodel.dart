@@ -49,7 +49,7 @@ class PracticeViewModel extends IWritingViewModel {
 
   @override
   String get currentMeaning =>
-    _characterRepository.getCharacterByIndex(_currentIndex).meaning;
+    _characterRepository.getCharacterByIndex(_currentIndex).meaning.join(', ');
 
   @override
   TracingResult get tracingResult => _tracingResult;

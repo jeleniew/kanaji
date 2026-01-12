@@ -10,18 +10,18 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
     : _characterRepository = characterRepository;
 
   int _currentIndex = 0;
-  bool _showingHiragana = true;
+  bool _showingCharacter = true;
 
   @override
   String get currentCard =>
-    _showingHiragana
+    _showingCharacter
     ? _characterRepository.getCharacterByIndex(_currentIndex).glyph
-    : _characterRepository.getCharacterByIndex(_currentIndex).meaning;
+    : _characterRepository.getCharacterByIndex(_currentIndex).meaning.join(', ');
 
   void _nextCard() {
     final length = _characterRepository.getCharacters().length;
     _currentIndex = (_currentIndex + 1) % length;
-    _showingHiragana = false;
+    _showingCharacter = false;
     
     notifyListeners();
   }
@@ -29,14 +29,14 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
   void _previousCard() {
     final length = _characterRepository.getCharacters().length;
     _currentIndex = (length + _currentIndex - 1) % length;
-    _showingHiragana = false;
+    _showingCharacter = false;
     
     notifyListeners();
   }
 
   @override
   void toggleSign() {
-    _showingHiragana = !_showingHiragana;
+    _showingCharacter = !_showingCharacter;
     notifyListeners();
   }
 
