@@ -2,10 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:kanaji/presentation/views/widgets/drawing_canvas.dart';
-import 'package:kanaji/presentation/views/widgets/grid_canvas.dart';
 
 class CombinedCanvas extends StatelessWidget {
-  final GridCanvas grid;
+  final Widget grid;
   final DrawingCanvas drawing;
 
   const CombinedCanvas({

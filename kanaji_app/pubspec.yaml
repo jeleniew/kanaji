@@ -45,6 +45,7 @@ dependencies:
   svg_path_parser: ^1.1.2
   xml: ^6.5.0
   auto_size_text: ^3.0.0
+  sqflite: ^2.4.2
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/kanji_svgs/
+    - assets/initial_data/
     - assets/ml_models/cnn_etl9g_hiragana_50e_nomargin_smooth_simple.tflite
     - assets/ml_models/cnn_etl9g_katakana_50e_nomargin_smooth_simple.tflite
     - assets/ml_models/cnn_etl9g_79s_50e_nomargin_smooth_simple.tflite

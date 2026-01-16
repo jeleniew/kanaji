@@ -26,6 +26,7 @@ class TracingViewModel extends IWritingViewModel {
   ui.Image? _processedImage;
   int _currentIndex = 0;
   late Future<String> _currentCharacterSvg;
+  int _characterLength = 0;
 
   TracingViewModel({
     required ICharacterRepository characterRepository,
@@ -38,7 +39,9 @@ class TracingViewModel extends IWritingViewModel {
     _modelService = modelService,
     _imageProcessingService = imageProcessingService,
     _drawingAnalyzerService = drawingAnalyzerService,
-    _kanjiRepository = kanjiRepository;
+    _kanjiRepository = kanjiRepository {
+      _loadSetLength();
+    }
 
   @override
   void attachDrawingVM(IDrawingCanvasViewModel vm) {
@@ -46,15 +49,15 @@ class TracingViewModel extends IWritingViewModel {
   }
 
   @override
-  String get currentCharacter =>
-    _characterRepository.getCharacterByIndex(_currentIndex).glyph;
+  Future<String> get currentCharacter async =>
+    (await _characterRepository.getCharacterByIndex(_currentIndex)).glyph;
 
   @override
-  String get currentMeaning =>
-    _characterRepository.getCharacterByIndex(_currentIndex).meaning.join(', ');
+  Future<String> get currentMeaning async =>
+    (await _characterRepository.getCharacterByIndex(_currentIndex)).meaning.replaceAll('|', ', ');
 
-  Future<String> get currentCharacterSvg {
-    _currentCharacterSvg = _kanjiRepository.getSvgByKanji(currentCharacter);
+  Future<String> get currentCharacterSvg async {
+    _currentCharacterSvg = _kanjiRepository.getSvgByKanji(await currentCharacter);
     return _currentCharacterSvg;
   }
 
@@ -64,21 +67,24 @@ class TracingViewModel extends IWritingViewModel {
 
   // TODO: use only for debugging
   ui.Image? get processedImage => _processedImage;
+
+  Future<void> _loadSetLength() async {
+    // TODO: method of counting in repo
+    _characterLength = await _characterRepository.getCharacters().then((value) => value.length);
+  }
   
   @override
   void previous() {
     // TODO: notifyListeners is invoked twice here
     clear();
-    int charactersLength = _characterRepository.getCharacters().length;
-    _currentIndex = (_currentIndex - 1 + charactersLength) % charactersLength;
+    _currentIndex = (_currentIndex - 1 + _characterLength) % _characterLength;
     notifyListeners();
   }
 
   @override
   void next() {
     clear();
-    int charactersLength = _characterRepository.getCharacters().length;
-    _currentIndex = (_currentIndex + 1) % charactersLength;
+    _currentIndex = (_currentIndex + 1) % _characterLength;
     notifyListeners();
   }
 
@@ -86,7 +92,7 @@ class TracingViewModel extends IWritingViewModel {
   void check() async{
     List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
 
-    final character = _characterRepository.getCharacterByIndex(_currentIndex);
+    final character = await _characterRepository.getCharacterByIndex(_currentIndex);
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
     final result = _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
 
@@ -108,10 +114,10 @@ class TracingViewModel extends IWritingViewModel {
 
     final result = _modelService.predictAllModels(
       floatInput,
-      _characterRepository.getCurrentTrainingMode()
+      _characterRepository.getCurrentCharacterType()
     );
 
-    final character = _characterRepository.getCharacterByIndex(_currentIndex);
+    final character = await _characterRepository.getCharacterByIndex(_currentIndex);
     int maches = 0;
     for (var prediction in await result) {
       var predictedLabel = prediction['prediction'];

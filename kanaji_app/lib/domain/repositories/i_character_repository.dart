@@ -1,8 +1,8 @@
 import 'package:kanaji/domain/entities/character.dart';
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 
 abstract class ICharacterRepository {
-  List<Character> getCharacters();
-  Character getCharacterByIndex(int index);
-  TrainingMode? getCurrentTrainingMode();
+  Future<List<Character>> getCharacters();
+  Future<Character> getCharacterByIndex(int index);
+  CharacterType? getCurrentCharacterType();
 }

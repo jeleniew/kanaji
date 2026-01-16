@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 
 abstract class IModelPredictionService {
   Future<void> init();
-  Future<List<dynamic>> predictAllModels(Float32List input, TrainingMode? trainingMode);
+  Future<List<dynamic>> predictAllModels(Float32List input, CharacterType? trainingMode);
 }

@@ -1,7 +1,7 @@
 // model_runner.dart
 import 'dart:typed_data';
 
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/services/i_model_runner.dart';
 import 'package:kanaji/domain/entities/model.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -58,7 +58,7 @@ class ModelRunner implements IModelRunner {
 
 
   @override
-  Future<int> predict(Float32List inputData, TrainingMode? trainingMode) async {
+  Future<int> predict(Float32List inputData, CharacterType? trainingMode) async {
     var inputTensor = List.generate(
       1,
       (_) => List.generate(
@@ -73,12 +73,12 @@ class ModelRunner implements IModelRunner {
     var output = List.generate(1, (_) => List.filled(_model.numClasses, 0.0));
     _interpreter.run(inputTensor, output);
     final scores = output[0];
-    if (trainingMode == TrainingMode.hiragana) {
+    if (trainingMode == CharacterType.hiragana) {
       for (int i = 0; i < scores.length; i++) {
         final label = i < hiraganaLabels.length ? hiraganaLabels[i] : "?";
         print("$label: ${scores[i].toStringAsFixed(5)}");
       }
-    } else if (trainingMode == TrainingMode.kanji) {
+    } else if (trainingMode == CharacterType.kanji) {
       for (int i = 0; i < scores.length; i++) {
         final label = i < kanjiLabels.length ? kanjiLabels[i] : "?";
         print("$label: ${scores[i].toStringAsFixed(5)}");

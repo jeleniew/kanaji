@@ -1,8 +1,8 @@
 // i_configuration_service.dart
 
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 
 abstract class IConfigurationService {
-  TrainingMode? get selectedMode;
-  void selectMode(TrainingMode mode);
+  CharacterType? get selectedCharacterType;
+  void selectMode(CharacterType mode);
 }

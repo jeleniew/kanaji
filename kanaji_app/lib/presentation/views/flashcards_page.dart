@@ -20,10 +20,18 @@ class FlashcardsPage extends StatelessWidget {
         child: Center(
           child: AspectRatio(
             aspectRatio: 1,
-            child: FlashcardView(
-              text: vm.currentCard,
-              onTap: vm.toggleSign,
-              onHorizontalDragEnd: vm.onHorizontalDragEnd,
+            child: FutureBuilder(
+              future: vm.currentCard,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return FlashcardView(
+                  text: snapshot.data!,
+                  onTap: vm.toggleSign,
+                  onHorizontalDragEnd: vm.onHorizontalDragEnd,
+                );
+              },
             ),
           ),
         ),

@@ -5,12 +5,11 @@ import 'package:kanaji/presentation/viewmodels/drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/presentation/views/base_page.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
-import 'package:kanaji/presentation/views/widgets/combined_canvas.dart';
 import 'package:provider/provider.dart';
 
 class WritingPage<T extends IWritingViewModel> extends StatefulWidget {
   final String title;
-  final CombinedCanvas Function(T vm) canvas;
+  final Widget Function(T vm) canvas;
 
   const WritingPage({
     super.key,
@@ -45,7 +44,7 @@ class _WritingPageState<T extends IWritingViewModel> extends State<WritingPage<T
 
 class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget {
   final String title;
-  final CombinedCanvas Function(T vm) canvas;
+  final Widget Function(T vm) canvas;
 
   const _InternalWritingPage({
     super.key,
@@ -63,7 +62,12 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
       title: title,
       body: Column(
         children: [
-          Text(vm.currentMeaning, style: TextStyle(fontSize: 48),),
+          FutureBuilder(future: vm.currentMeaning, builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return Text(snapshot.data!, style: TextStyle(fontSize: 48));
+          }),
           Expanded(
             child: canvas(vm),
           ),

@@ -6,7 +6,7 @@ import 'package:kanaji/data/datasources/character_data_source.dart';
 import 'package:kanaji/data/datasources/model_data_source.dart';
 import 'package:kanaji/data/services/model_runner.dart';
 import 'package:kanaji/domain/entities/model.dart';
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
 
 // TODO: consider making prediction service
@@ -31,7 +31,7 @@ class ModelPredictionService implements IModelPredictionService {
   }
 
   @override
-  Future<List<dynamic>> predictAllModels(Float32List inputData, TrainingMode? trainingMode) async {
+  Future<List<dynamic>> predictAllModels(Float32List inputData, CharacterType? trainingMode) async {
     List<dynamic> results = [];
 
     for (var runner in runners) {
@@ -41,9 +41,9 @@ class ModelPredictionService implements IModelPredictionService {
       try {
         var predictedIdx = await runner.predict(inputData, trainingMode);
         print("Predicted index: $predictedIdx");
-        var prediction = trainingMode == TrainingMode.kanji
+        var prediction = trainingMode == CharacterType.kanji
           ? CharacterDataSource().getAllKanji()[predictedIdx].glyph 
-          : trainingMode == TrainingMode.hiragana
+          : trainingMode == CharacterType.hiragana
           ? CharacterDataSource().getAllHiragana()[predictedIdx].glyph 
           : "?";
         print("Model ${runner.model.name} predicted: $prediction");

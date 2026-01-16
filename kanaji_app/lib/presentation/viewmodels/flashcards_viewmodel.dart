@@ -7,28 +7,35 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
   final ICharacterRepository _characterRepository;
 
   FlashcardsViewModel({required ICharacterRepository characterRepository})
-    : _characterRepository = characterRepository;
+    : _characterRepository = characterRepository {
+      _loadSetLength();
+    }
 
   int _currentIndex = 0;
   bool _showingCharacter = true;
+  int _characterLength = 0;
+
+  Future<void> _loadSetLength() async {
+    final characters = await _characterRepository.getCharacters();
+    _characterLength = characters.length;
+  }
 
   @override
-  String get currentCard =>
+  Future<String> get currentCard async =>
     _showingCharacter
-    ? _characterRepository.getCharacterByIndex(_currentIndex).glyph
-    : _characterRepository.getCharacterByIndex(_currentIndex).meaning.join(', ');
+    ? (await _characterRepository.getCharacterByIndex(_currentIndex)).glyph
+    : (await _characterRepository.getCharacterByIndex(_currentIndex)).meaning
+      .replaceAll('|', ', ');
 
   void _nextCard() {
-    final length = _characterRepository.getCharacters().length;
-    _currentIndex = (_currentIndex + 1) % length;
+    _currentIndex = (_currentIndex + 1) % _characterLength;
     _showingCharacter = false;
     
     notifyListeners();
   }
 
   void _previousCard() {
-    final length = _characterRepository.getCharacters().length;
-    _currentIndex = (length + _currentIndex - 1) % length;
+    _currentIndex = (_characterLength + _currentIndex - 1) % _characterLength;
     _showingCharacter = false;
     
     notifyListeners();

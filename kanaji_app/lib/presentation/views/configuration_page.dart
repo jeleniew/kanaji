@@ -1,7 +1,7 @@
 // configuration_page.dart
 
 import 'package:flutter/material.dart';
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_configuration_viewmodel.dart';
 import 'package:kanaji/presentation/views/base_page.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +24,8 @@ class ConfigurationPage extends StatelessWidget {
             child: 
             ListView(
               children: [
-                ...TrainingMode.values.map((mode) {
-                  return RadioListTile<TrainingMode>(
+                ...CharacterType.values.map((mode) {
+                  return RadioListTile<CharacterType>(
                       title: Text(mode.displayName),
                       value: mode,
                       groupValue: vm.selectedMode,

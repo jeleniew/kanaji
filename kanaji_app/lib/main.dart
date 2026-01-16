@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kanaji/core/di/di.dart';
 import 'package:kanaji/data/services/model_service.dart';
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
@@ -22,6 +22,7 @@ import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
+import 'package:kanaji/presentation/views/datasets_page.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
 import 'package:kanaji/presentation/views/configuration_page.dart';
 import 'package:kanaji/presentation/views/tracing_page.dart';
@@ -93,9 +94,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final mode = context.watch<IConfigurationViewModel>().selectedMode;
     final title = switch (mode) {
-      TrainingMode.hiragana => ' - Hiragana',
-      TrainingMode.katakana => ' - Katakana',
-      TrainingMode.kanji => ' - Kanji',
+      CharacterType.hiragana => ' - Hiragana',
+      CharacterType.katakana => ' - Katakana',
+      CharacterType.kanji => ' - Kanji',
       null => '',
     };
 
@@ -119,7 +120,9 @@ class MyApp extends StatelessWidget {
           '/memory_practice',
         ),
         '/memory_practice': (context) => PracticePage(title: 'Memory Practice$title'),
+        '/datasets': (context) => DatasetsPage(title: 'Datasets$title'),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
+
       },
     );
   }

@@ -1,7 +1,7 @@
 // tracing_configuration_viewmodel.dart
 
 import 'package:flutter/widgets.dart';
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_configuration_viewmodel.dart';
 
@@ -13,10 +13,10 @@ class ConfigurationViewModel extends IConfigurationViewModel {
       : _configurationService = configurationService;
 
   @override
-  TrainingMode? get selectedMode => _configurationService.selectedMode;
+  CharacterType? get selectedMode => _configurationService.selectedCharacterType;
 
   @override
-  void selectMode(TrainingMode mode) {
+  void selectMode(CharacterType mode) {
     _configurationService.selectMode(mode);
     notifyListeners();
   }

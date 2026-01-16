@@ -1,10 +1,10 @@
-import 'package:kanaji/domain/entities/training_mode.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 
 class Model {
   final String name;
   final String assetPath;
   final int numClasses;
-  final TrainingMode? trainingMode;
+  final CharacterType? trainingMode;
 
   Model({
     required this.name,
