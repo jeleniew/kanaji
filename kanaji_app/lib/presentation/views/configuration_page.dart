@@ -26,11 +26,11 @@ class ConfigurationPage extends StatelessWidget {
               children: [
                 ...CharacterType.values.map((mode) {
                   return RadioListTile<CharacterType>(
-                      title: Text(mode.displayName),
-                      value: mode,
-                      groupValue: vm.selectedMode,
-                      onChanged: (selectedMode) => vm.selectMode(selectedMode!),
-                    );
+                    title: Text(mode.displayName),
+                    value: mode,
+                    groupValue: vm.selectedMode,
+                    onChanged: (selectedMode) => vm.selectMode(selectedMode!),
+                  );
                 }),
               ],
             ),

@@ -14,14 +14,19 @@ import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
 import 'package:kanaji/domain/repositories/i_route_repository.dart';
 import 'package:kanaji/presentation/viewmodels/app_drawer_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/create_dataset_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/datasets_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/flashcards_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_configuration_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_create_dataset_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_datasets_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_flashcards_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
+import 'package:kanaji/presentation/views/create_dataset_page.dart';
 import 'package:kanaji/presentation/views/datasets_page.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
 import 'package:kanaji/presentation/views/configuration_page.dart';
@@ -81,6 +86,16 @@ void main() async {
             kanjiRepository: DI().getIt<IKanjiRepository>(),
           ),
         ),
+        ChangeNotifierProvider<IDatasetsViewmodel>(
+          create: (_) => DatasetsViewmodel(
+            characterRepository: DI().getIt<ICharacterRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<ICreateDatasetViewModel>(
+          create: (_) => CreateDatasetViewmodel(
+            characterRepository: DI().getIt<ICharacterRepository>(),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -120,7 +135,8 @@ class MyApp extends StatelessWidget {
           '/memory_practice',
         ),
         '/memory_practice': (context) => PracticePage(title: 'Memory Practice$title'),
-        '/datasets': (context) => DatasetsPage(title: 'Datasets$title'),
+        '/datasets': (context) => DatasetsPage(title: 'Datasets'),
+        '/create-dataset': (context) => const CreateDatasetPage(),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
 
       },

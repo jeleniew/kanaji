@@ -12,4 +12,16 @@ class CharacterSet {
     required this.description,
     required this.type,
   });
+
+  static CharacterSet fromMap(Map<String, Object?> map) {
+    return CharacterSet(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      description: map['description'] as String,
+      type: CharacterType.values.firstWhere(
+        (e) => e.name == map['type'],
+        orElse: () => CharacterType.kanji,
+      ),
+    );
+  }
 }

@@ -1,6 +1,7 @@
 // character_repository.dart
 import 'package:kanaji/domain/datasources/i_character_data_source.dart';
 import 'package:kanaji/domain/entities/character.dart';
+import 'package:kanaji/domain/entities/character_set.dart';
 import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
@@ -40,5 +41,12 @@ class CharacterRepository implements ICharacterRepository {
   @override
   CharacterType? getCurrentCharacterType() {
     return _configurationService.selectedCharacterType;
+  }
+
+  @override
+  Future<List<CharacterSet>> getAvailableCharacterSets() async {
+    final db = await dbHelper.database;
+    final result = await db.query('character_sets');
+    return result.map((e) => CharacterSet.fromMap(e)).toList();
   }
 }

@@ -5,7 +5,8 @@ import 'package:kanaji/presentation/views/app_drawer.dart';
 class BasePage extends StatelessWidget {
   final String title;
   final Widget body;
-  const BasePage({super.key, required this.title, required this.body});
+  final Widget? floatingActionButton;
+  const BasePage({super.key, required this.title, required this.body, this.floatingActionButton});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class BasePage extends StatelessWidget {
         child: body,
       ),
       drawer: const AppDrawer(),
+      floatingActionButton: floatingActionButton,
     );
   }
 }
