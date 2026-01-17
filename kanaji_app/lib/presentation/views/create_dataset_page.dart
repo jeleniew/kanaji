@@ -40,7 +40,7 @@ class CreateDatasetPage extends StatelessWidget {
               }).toList(),
             ),
             ElevatedButton(
-              onPressed: vm.createDataset,
+              onPressed: () => vm.createDataset(context),
               child: Text('Create Dataset'),
             ),
           ],

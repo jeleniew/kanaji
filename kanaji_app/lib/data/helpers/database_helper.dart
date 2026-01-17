@@ -38,7 +38,8 @@ class DatabaseHelper {
       CREATE TABLE character_sets (
         id INTEGER PRIMARY KEY,
         name TEXT UNIQUE NOT NULL,
-        description TEXT
+        description TEXT,
+        type TEXT NOT NULL
       )
     ''');
 
@@ -70,6 +71,7 @@ class DatabaseHelper {
       final setId = await db.insert('character_sets', {
         'name': name,
         'description': 'Initial $name set',
+        'type': type,
       });
 
       final jsonString = await rootBundle.loadString(file);

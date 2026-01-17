@@ -24,16 +24,20 @@ import 'package:kanaji/presentation/viewmodels/interfaces/i_flashcards_viewmodel
 import 'package:kanaji/presentation/viewmodels/interfaces/i_home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_select_characters_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/select_characters_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
 import 'package:kanaji/presentation/views/create_dataset_page.dart';
 import 'package:kanaji/presentation/views/datasets_page.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
 import 'package:kanaji/presentation/views/configuration_page.dart';
+import 'package:kanaji/presentation/views/select_characters_page.dart';
 import 'package:kanaji/presentation/views/tracing_page.dart';
 import 'package:kanaji/presentation/views/practice_page.dart';
 import 'package:provider/provider.dart';
 import 'presentation/views/flashcards_page.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +46,8 @@ void main() async {
     await ModelPredictionService().init();
   } else {
     print("AI does not work on desktop.");
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
   }
   
   DI().initDI();
@@ -96,6 +102,11 @@ void main() async {
             characterRepository: DI().getIt<ICharacterRepository>(),
           ),
         ),
+        ChangeNotifierProvider<ISelectCharactersViewmodel>(
+          create: (_) => SelectCharactersViewModel(
+            characterRepository: DI().getIt<ICharacterRepository>(),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -137,6 +148,7 @@ class MyApp extends StatelessWidget {
         '/memory_practice': (context) => PracticePage(title: 'Memory Practice$title'),
         '/datasets': (context) => DatasetsPage(title: 'Datasets'),
         '/create-dataset': (context) => const CreateDatasetPage(),
+        '/select_characters': (context) => const SelectCharactersPage(),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
 
       },

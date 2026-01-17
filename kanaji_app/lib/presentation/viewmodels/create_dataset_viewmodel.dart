@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_create_dataset_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/interfaces/i_select_characters_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class CreateDatasetViewmodel extends ICreateDatasetViewModel {
   final ICharacterRepository _characterRepository;
@@ -40,19 +43,20 @@ class CreateDatasetViewmodel extends ICreateDatasetViewModel {
   }
 
   @override
-  void createDataset() {
+  void createDataset(BuildContext context) {
     if (_datasetTitle.isEmpty || _selectedType == null) {
       // TODO: handle this
       throw Exception('Dataset title and type must be provided.');
     }
 
-    // _characterRepository.createCharacterSet(
-    //   title: _datasetTitle,
-    //   description: _datasetDescription,
-    //   type: _selectedType!,
-    // );
+    final selectVM = Provider.of<ISelectCharactersViewmodel>(context, listen: false);
+    selectVM.setDatasetInfo(
+      title: _datasetTitle,
+      description: _datasetDescription,
+      characterType: _selectedType!,
+    );
 
-// TODO: navigate to next page
+    Navigator.of(context).pushNamed('/select_characters');
   }
 }
 

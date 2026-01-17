@@ -15,14 +15,24 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/icons/classroom.jpg'),
-                fit: BoxFit.cover,
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/',
+                (route) => false,
+              );
+            },
+            child: const DrawerHeader(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/icons/classroom.jpg'),
+                  fit: BoxFit.cover,
+                ),
               ),
+              child: Text('Kanaji'),
             ),
-            child: Text(''), // TODO
           ),
           ...vm.routes.map((appRoute) {
             return ListTile(

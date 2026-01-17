@@ -8,5 +8,5 @@ abstract class ICreateDatasetViewModel extends ChangeNotifier {
   void setDatasetDescription(String description);
   CharacterType? get selectedType;
   void setSelectedType(CharacterType selectedType);
-  void createDataset();
+  void createDataset(BuildContext context);
 }
