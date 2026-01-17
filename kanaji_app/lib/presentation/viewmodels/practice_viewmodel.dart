@@ -4,9 +4,11 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
+import 'package:kanaji/domain/services/i_configuration_service.dart';
 import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
@@ -19,6 +21,7 @@ class PracticeViewModel extends IWritingViewModel {
   final IImageProcessingService _imageProcessingService;
   final IDrawingAnalyzerService _drawingAnalyzerService;
   final IKanjiRepository _kanjiRepository;
+  final IConfigurationService _configurationService;
 
   int _currentIndex = 0;
   late IDrawingCanvasViewModel _drawingCanvasViewModel;
@@ -32,12 +35,14 @@ class PracticeViewModel extends IWritingViewModel {
     required IImageProcessingService imageProcessingService,
     required IDrawingAnalyzerService drawingAnalyzerService,
     required IKanjiRepository kanjiRepository,
+    required IConfigurationService configurationService,
   }) :
     _characterRepository = characterRepository,
     _modelService = modelService,
     _imageProcessingService = imageProcessingService,
     _drawingAnalyzerService = drawingAnalyzerService,
-    _kanjiRepository = kanjiRepository {
+    _kanjiRepository = kanjiRepository,
+    _configurationService = configurationService {
       _loadSetLength();
     }
 
@@ -61,7 +66,7 @@ class PracticeViewModel extends IWritingViewModel {
 
   Future<void> _loadSetLength() async {
     // TODO: method of counting in repo
-    _characterLength = await _characterRepository.getCharacters().then((value) => value.length);
+    _characterLength = await _characterRepository.getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana).then((value) => value.length);
   }
 
   @override

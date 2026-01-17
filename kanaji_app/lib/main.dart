@@ -67,11 +67,13 @@ void main() async {
         ChangeNotifierProvider<IFlashcardsViewModel>(
           create: (_) => FlashcardsViewModel(
             characterRepository: DI().getIt<ICharacterRepository>(),
+            configurationService: DI().getIt<IConfigurationService>(),
           ),
         ),
         ChangeNotifierProvider<IConfigurationViewModel>(
           create: (_) => ConfigurationViewModel(
             configurationService: DI().getIt<IConfigurationService>(),
+            characterRepository: DI().getIt<ICharacterRepository>(),
           ),
         ),
         ChangeNotifierProvider<TracingViewModel>(
@@ -81,6 +83,7 @@ void main() async {
             imageProcessingService: DI().getIt<IImageProcessingService>(),
             drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),
             kanjiRepository: DI().getIt<IKanjiRepository>(),
+            configurationService: DI().getIt<IConfigurationService>(),
           ),
         ),
         ChangeNotifierProvider<PracticeViewModel>(
@@ -90,6 +93,7 @@ void main() async {
             imageProcessingService: DI().getIt<IImageProcessingService>(),
             drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),
             kanjiRepository: DI().getIt<IKanjiRepository>(),
+            configurationService: DI().getIt<IConfigurationService>(),
           ),
         ),
         ChangeNotifierProvider<IDatasetsViewmodel>(
@@ -118,8 +122,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mode = context.watch<IConfigurationViewModel>().selectedMode;
-    final title = switch (mode) {
+    final set = context.watch<IConfigurationViewModel>().selectedSet;
+    final title = switch (set?.type) {
       CharacterType.hiragana => ' - Hiragana',
       CharacterType.katakana => ' - Katakana',
       CharacterType.kanji => ' - Kanji',

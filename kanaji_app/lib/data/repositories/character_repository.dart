@@ -20,19 +20,6 @@ class CharacterRepository implements ICharacterRepository {
     _configurationService = configurationService;
 
   @override
-  Future<List<Character>> getCharacters() async {
-    // TODO: consier using sets
-    final db = await dbHelper.database;
-
-    final result = await db.query(
-      'characters',
-      where: 'type = ?',
-      whereArgs: [_configurationService.selectedCharacterType?.name ?? ""]);
-
-      return result.map((e) => Character.fromMap(e)).toList();
-  }
-
-  @override
   Future<List<Character>> getCharactersByType(CharacterType characterType) async {
     // TODO: consier using sets
     final db = await dbHelper.database;
@@ -47,13 +34,13 @@ class CharacterRepository implements ICharacterRepository {
 
   @override
   Future<Character> getCharacterByIndex(int index) async {
-    final characters = await getCharacters();
+    final characters = await getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana);
     return characters[index];
   }
 
   @override
   CharacterType? getCurrentCharacterType() {
-    return _configurationService.selectedCharacterType;
+    return _configurationService.selectedSet?.type;
   }
 
   @override

@@ -1,8 +1,8 @@
 // i_configuration_service.dart
 
-import 'package:kanaji/domain/entities/character_type.dart';
+import 'package:kanaji/domain/entities/character_set.dart';
 
 abstract class IConfigurationService {
-  CharacterType? get selectedCharacterType;
-  void selectMode(CharacterType mode);
+  CharacterSet? get selectedSet;
+  void selectSet(CharacterSet set);
 }
