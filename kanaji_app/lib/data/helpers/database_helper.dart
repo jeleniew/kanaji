@@ -53,6 +53,19 @@ class DatabaseHelper {
       )
     ''');
 
+    await db.execute('''
+      CREATE TABLE user_progress (
+        id INTEGER PRIMARY KEY,
+        character_id INTEGER NOT NULL,
+        set_id INTEGER NOT NULL,
+        mode TEXT NOT NULL,
+        result INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (character_id) REFERENCES characters(id),
+        FOREIGN KEY (set_id) REFERENCES character_sets(id),
+      )
+    ''');
+
     await _insertInitialSets(db);
   }
 
