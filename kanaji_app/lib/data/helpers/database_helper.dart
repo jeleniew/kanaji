@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:kanaji/domain/helpers/i_database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseHelper {
+class DatabaseHelper implements IDatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
 
@@ -11,6 +12,7 @@ class DatabaseHelper {
 
   static Database? _database;
 
+  @override
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _openDatabase();

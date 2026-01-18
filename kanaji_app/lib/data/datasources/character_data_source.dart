@@ -1,15 +1,10 @@
 // kana_data_source.dart
 
-import 'package:kanaji/domain/datasources/i_character_data_source.dart';
 import 'package:kanaji/domain/entities/character.dart';
 
-class CharacterDataSource implements ICharacterDataSource {
-  @override
+class CharacterDataSource {
   List<Character> getAllHiragana() => hiragana;
-  
-  @override
   List<Character> getAllKatakana() => katakana;
-  @override
   List<Character> getAllKanji() => kanji;
 
   List<Character> hiragana = [

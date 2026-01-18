@@ -1,23 +1,21 @@
 // character_repository.dart
-import 'package:kanaji/domain/datasources/i_character_data_source.dart';
 import 'package:kanaji/domain/entities/character.dart';
 import 'package:kanaji/domain/entities/character_set.dart';
 import 'package:kanaji/domain/entities/character_type.dart';
+import 'package:kanaji/domain/helpers/i_database_helper.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
-import 'package:kanaji/data/helpers/database_helper.dart';
 
 class CharacterRepository implements ICharacterRepository {
   final IConfigurationService _configurationService;
-
-// TODO: czy robić przez DI?
-  final dbHelper = DatabaseHelper();
+  final IDatabaseHelper dbHelper;
 
   CharacterRepository({
     required IConfigurationService configurationService,
-    required ICharacterDataSource characterDataSource,
+    required IDatabaseHelper databaseHelper,
   }) :
-    _configurationService = configurationService;
+    _configurationService = configurationService,
+    dbHelper = databaseHelper;
 
   @override
   Future<List<Character>> getCharactersByType(CharacterType characterType) async {
@@ -46,7 +44,6 @@ class CharacterRepository implements ICharacterRepository {
     return result.map((e) => Character.fromMap(e)).toList();
   }
 
-  @override
   Future<Character> getCharacterByIndex(int index) async {
     final characters = await getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana);
     return characters[index];
