@@ -15,24 +15,12 @@ class PracticePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return WritingPage<PracticeViewModel>(
       title: title,
-      canvas: (vm) => FutureBuilder(
-        future: vm.currentCharacter,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final character = snapshot.data![0];
-          final svgData = vm.currentCharacterSvg;
-
-          return CombinedCanvas(
-            grid: GridCanvas(
-              character: character,
-              svgData: svgData,
-            ),
-            drawing: DrawingCanvas(),
-          );
-        },
+      canvas: (vm) => CombinedCanvas(
+        grid: GridCanvas(
+          character: vm.currentCharacter,
+          svgData: vm.currentCharacterSvg,
+        ),
+        drawing: DrawingCanvas(),
       ),
     );
   }

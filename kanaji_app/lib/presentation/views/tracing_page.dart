@@ -15,23 +15,9 @@ class TracingPage extends StatelessWidget {
     return WritingPage<TracingViewModel>(
       title: title,
       canvas: (vm) => CombinedCanvas(
-        grid: FutureBuilder(
-          future: vm.currentCharacter,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData) {
-              return const Center(child: Text('No character data available.'));
-            }
-            final character = snapshot.data!;
-
-            return GridCanvas(
-              character: character,
-              svgData: vm.currentCharacterSvg,
-            );
-          },
+        grid:  GridCanvas(
+          character: vm.currentCharacter,
+          svgData: vm.currentCharacterSvg,
         ),
         drawing: DrawingCanvas(),
       ),

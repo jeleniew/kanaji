@@ -3,8 +3,9 @@ import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
 
 abstract class IWritingViewModel extends ChangeNotifier {
-  Future<String> get currentCharacter;
-  Future<String> get currentMeaning;
+  Future<void> init();
+  String get currentCharacter;
+  String get currentMeaning;
   TracingResult get tracingResult;
 
   void attachDrawingVM(IDrawingCanvasViewModel vm);

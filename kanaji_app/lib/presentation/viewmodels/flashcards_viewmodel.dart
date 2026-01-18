@@ -1,6 +1,6 @@
 // flashcards_viewmodel.dart
 import 'package:flutter/material.dart';
-import 'package:kanaji/domain/entities/character_type.dart';
+import 'package:kanaji/domain/entities/character.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_flashcards_viewmodel.dart';
@@ -15,23 +15,29 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
   }) :
     _characterRepository = characterRepository,
     _configurationService = configurationService {
-      _loadSetLength();
+      _loadCharacters();
     }
 
   int _currentIndex = 0;
   bool _showingCharacter = true;
   int _characterLength = 0;
+  late List<Character> _characters;
 
-  Future<void> _loadSetLength() async {
-    final characters = await _characterRepository.getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana);
-    _characterLength = characters.length;
+  
+  Future<void> _loadCharacters() async {
+    if (_configurationService.selectedSet == null) {
+      throw Exception('No character set selected');
+    }
+    _characters = await _characterRepository.getCharactersBySet(
+      _configurationService.selectedSet!);
+    _characterLength = _characters.length;
   }
 
   @override
   Future<String> get currentCard async =>
     _showingCharacter
-    ? (await _characterRepository.getCharacterByIndex(_currentIndex)).glyph
-    : (await _characterRepository.getCharacterByIndex(_currentIndex)).meaning
+    ? _characters[_currentIndex].glyph
+    : _characters[_currentIndex].meaning
       .replaceAll('|', ', ');
 
   void _nextCard() {

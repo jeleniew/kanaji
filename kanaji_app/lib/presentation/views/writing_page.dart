@@ -5,11 +5,12 @@ import 'package:kanaji/presentation/viewmodels/drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/presentation/views/base_page.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_drawing_canvas_viewmodel.dart';
+import 'package:kanaji/presentation/views/widgets/combined_canvas.dart';
 import 'package:provider/provider.dart';
 
 class WritingPage<T extends IWritingViewModel> extends StatefulWidget {
   final String title;
-  final Widget Function(T vm) canvas;
+  final CombinedCanvas Function(T vm) canvas;
 
   const WritingPage({
     super.key,
@@ -23,11 +24,15 @@ class WritingPage<T extends IWritingViewModel> extends StatefulWidget {
 
 class _WritingPageState<T extends IWritingViewModel> extends State<WritingPage<T>> {
   late final IDrawingCanvasViewModel _drawingCanvasViewModel;
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     super.initState();
     _drawingCanvasViewModel = DrawingCanvasViewModel();
+
+    final vm = Provider.of<T>(context, listen: false);
+    _initFuture = vm.init();
   }
 
   @override
@@ -37,6 +42,7 @@ class _WritingPageState<T extends IWritingViewModel> extends State<WritingPage<T
       child: _InternalWritingPage<T>(
         title: widget.title,
         canvas: widget.canvas,
+        initFuture: _initFuture,
       ),
     );
   }
@@ -44,13 +50,43 @@ class _WritingPageState<T extends IWritingViewModel> extends State<WritingPage<T
 
 class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget {
   final String title;
-  final Widget Function(T vm) canvas;
+  final CombinedCanvas Function(T vm) canvas;
+  final Future<void> initFuture;
 
   const _InternalWritingPage({
     super.key,
     required this.title,
-    required this.canvas
+    required this.canvas,
+    required this.initFuture,
   });
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final vm = Provider.of<T>(context);
+  //   final drawingVM = context.read<IDrawingCanvasViewModel>();
+  //   vm.attachDrawingVM(drawingVM);
+
+  //   return BasePage(
+  //     title: title,
+  //     body: Column(
+  //       children: [
+  //         Text(vm.currentMeaning, style: TextStyle(fontSize: 48)),
+  //         Expanded(
+  //           child: canvas(vm),
+  //         ),
+  //         // if (vm.processedImage != null)
+  //         //   Container(
+  //         //     width: 128,
+  //         //     height: 127,
+  //         //     color: Colors.red,
+  //         //     child: RawImage(image: vm.processedImage),
+  //         //   ),
+  //         if (vm.tracingResult == TracingResult.none) _buildActionBar(vm),
+  //         if (vm.tracingResult != TracingResult.none) _buildResultBar(vm),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,32 +94,36 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
     final drawingVM = context.read<IDrawingCanvasViewModel>();
     vm.attachDrawingVM(drawingVM);
 
-    return BasePage(
-      title: title,
-      body: Column(
-        children: [
-          FutureBuilder(future: vm.currentMeaning, builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return Text(snapshot.data!, style: TextStyle(fontSize: 48));
-          }),
-          Expanded(
-            child: canvas(vm),
-          ),
-          // if (vm.processedImage != null)
-          //   Container(
-          //     width: 128,
-          //     height: 127,
-          //     color: Colors.red,
-          //     child: RawImage(image: vm.processedImage),
-          //   ),
-          if (vm.tracingResult == TracingResult.none) _buildActionBar(vm),
-          if (vm.tracingResult != TracingResult.none) _buildResultBar(vm),
-        ],
-      ),
+    return FutureBuilder(
+      future: initFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return _buildContent(context, vm);
+      },
     );
   }
+
+  Widget _buildContent(BuildContext context, T vm) {
+  return BasePage(
+    title: title,
+    body: Column(
+      children: [
+        Text(vm.currentMeaning, style: TextStyle(fontSize: 48)),
+        Expanded(
+          child: canvas(vm),
+        ),
+        if (vm.tracingResult == TracingResult.none)
+          _buildActionBar(vm),
+        if (vm.tracingResult != TracingResult.none)
+          _buildResultBar(vm),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildActionBar(T vm) {
     return Row(

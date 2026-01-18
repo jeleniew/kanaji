@@ -33,6 +33,20 @@ class CharacterRepository implements ICharacterRepository {
   }
 
   @override
+  Future<List<Character>> getCharactersBySet(CharacterSet characterSet) async {
+    final db = await dbHelper.database;
+
+    final result = await db.rawQuery('''
+      SELECT c.*
+      FROM characters c
+      JOIN character_set_items csi ON c.id = csi.character_id
+      WHERE csi.character_set_id = ?
+    ''', [characterSet.id]);
+
+    return result.map((e) => Character.fromMap(e)).toList();
+  }
+
+  @override
   Future<Character> getCharacterByIndex(int index) async {
     final characters = await getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana);
     return characters[index];

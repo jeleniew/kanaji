@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:kanaji/domain/entities/character.dart';
 import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
@@ -28,6 +29,7 @@ class PracticeViewModel extends IWritingViewModel {
   TracingResult _tracingResult = TracingResult.none;
   Future<String>? _currentCharacterSvg;
   int _characterLength = 0;
+  late List<Character> _characters;
 
   PracticeViewModel({
     required ICharacterRepository characterRepository,
@@ -42,9 +44,17 @@ class PracticeViewModel extends IWritingViewModel {
     _imageProcessingService = imageProcessingService,
     _drawingAnalyzerService = drawingAnalyzerService,
     _kanjiRepository = kanjiRepository,
-    _configurationService = configurationService {
-      _loadSetLength();
+    _configurationService = configurationService;
+  
+  @override
+  Future<void> init() async {
+    if (_configurationService.selectedSet == null) {
+      throw Exception('No character set selected');
     }
+    _characters = await _characterRepository.getCharactersBySet(
+      _configurationService.selectedSet!);
+    _characterLength = _characters.length;
+  }
 
   @override
   void attachDrawingVM(IDrawingCanvasViewModel vm) {
@@ -52,22 +62,17 @@ class PracticeViewModel extends IWritingViewModel {
   }
 
   @override
-  Future<String> get currentCharacter async =>
-   (await _characterRepository.getCharacterByIndex(_currentIndex)).glyph;
+  String get currentCharacter =>
+   _characters[_currentIndex].glyph;
 
   @override
-  Future<String> get currentMeaning async =>
-    (await _characterRepository.getCharacterByIndex(_currentIndex)).meaning.replaceAll('|', ', ');
+  String get currentMeaning =>
+    _characters[_currentIndex].meaning.replaceAll('|', ', ');
 
   @override
   TracingResult get tracingResult => _tracingResult;
 
   Future<String>? get currentCharacterSvg => _currentCharacterSvg;
-
-  Future<void> _loadSetLength() async {
-    // TODO: method of counting in repo
-    _characterLength = await _characterRepository.getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana).then((value) => value.length);
-  }
 
   @override
   void previous() async {
@@ -87,7 +92,7 @@ class PracticeViewModel extends IWritingViewModel {
   void check() async {
     List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
 
-    final character = await _characterRepository.getCharacterByIndex(_currentIndex);
+    final character = _characters[_currentIndex];
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
     final result =  _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
 
@@ -112,7 +117,7 @@ class PracticeViewModel extends IWritingViewModel {
       _characterRepository.getCurrentCharacterType()
     );
 
-    final character = await _characterRepository.getCharacterByIndex(_currentIndex);
+    final character = _characters[_currentIndex];
     int maches = 0;
     for (var prediction in await result) {
       var predictedLabel = prediction['prediction'];

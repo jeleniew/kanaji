@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:kanaji/domain/entities/character_type.dart';
+import 'package:kanaji/domain/entities/character.dart';
 import 'package:kanaji/domain/entities/tracing_result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
@@ -30,6 +30,7 @@ class TracingViewModel extends IWritingViewModel {
   int _currentIndex = 0;
   late Future<String> _currentCharacterSvg;
   int _characterLength = 0;
+  late List<Character> _characters;
 
   TracingViewModel({
     required ICharacterRepository characterRepository,
@@ -44,9 +45,17 @@ class TracingViewModel extends IWritingViewModel {
     _imageProcessingService = imageProcessingService,
     _drawingAnalyzerService = drawingAnalyzerService,
     _kanjiRepository = kanjiRepository,
-    _configurationService = configurationService {
-      _loadSetLength();
+    _configurationService = configurationService;
+
+  @override
+  Future<void> init() async {
+    if (_configurationService.selectedSet == null) {
+      throw Exception('No character set selected');
     }
+    _characters = await _characterRepository.getCharactersBySet(
+      _configurationService.selectedSet!);
+    _characterLength = _characters.length;
+  }
 
   @override
   void attachDrawingVM(IDrawingCanvasViewModel vm) {
@@ -54,35 +63,29 @@ class TracingViewModel extends IWritingViewModel {
   }
 
   @override
-  Future<String> get currentCharacter async =>
-    (await _characterRepository.getCharacterByIndex(_currentIndex)).glyph;
+  String get currentCharacter => _characters[_currentIndex].glyph;
 
   @override
-  Future<String> get currentMeaning async =>
-    (await _characterRepository.getCharacterByIndex(_currentIndex)).meaning.replaceAll('|', ', ');
+  String get currentMeaning =>
+    _characters[_currentIndex].meaning.replaceAll('|', ', ');
 
   Future<String> get currentCharacterSvg async {
-    _currentCharacterSvg = _kanjiRepository.getSvgByKanji(await currentCharacter);
+    _currentCharacterSvg = _kanjiRepository.getSvgByKanji(currentCharacter);
     return _currentCharacterSvg;
   }
-
 
   @override
   TracingResult get tracingResult => _tracingResult;
 
   // TODO: use only for debugging
   ui.Image? get processedImage => _processedImage;
-
-  Future<void> _loadSetLength() async {
-    // TODO: method of counting in repo
-    _characterLength = await _characterRepository.getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana).then((value) => value.length);
-  }
   
   @override
   void previous() {
     // TODO: notifyListeners is invoked twice here
     clear();
     _currentIndex = (_currentIndex - 1 + _characterLength) % _characterLength;
+    print('Previous index: $_currentIndex');
     notifyListeners();
   }
 
@@ -90,6 +93,7 @@ class TracingViewModel extends IWritingViewModel {
   void next() {
     clear();
     _currentIndex = (_currentIndex + 1) % _characterLength;
+    print('Next index: $_currentIndex');
     notifyListeners();
   }
 
@@ -97,15 +101,16 @@ class TracingViewModel extends IWritingViewModel {
   void check() async{
     List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
 
-    final character = await _characterRepository.getCharacterByIndex(_currentIndex);
+    final character = _characters[_currentIndex];
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
     final result = _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
-
+print('here');
     if (result) {
       _tracingResult = TracingResult.correct;
     } else {
       _tracingResult = TracingResult.incorrect;
     }
+    print('Result: $_tracingResult');
     notifyListeners();
   }
 
@@ -122,7 +127,7 @@ class TracingViewModel extends IWritingViewModel {
       _characterRepository.getCurrentCharacterType()
     );
 
-    final character = await _characterRepository.getCharacterByIndex(_currentIndex);
+    final character = _characters[_currentIndex];
     int maches = 0;
     for (var prediction in await result) {
       var predictedLabel = prediction['prediction'];
