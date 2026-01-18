@@ -8,12 +8,10 @@ class DrawingCanvasViewModel extends IDrawingCanvasViewModel {
   // TODO: add smoothing lines
 
   @override
-  List<List<Offset>> get strokes  {
-    if (_currentStroke.isEmpty) {
-      return _strokes;
-    }
-    return List.from(_strokes)..add(_currentStroke);
-  }
+  List<List<Offset>> get strokes => [
+    ..._strokes,
+    if (_currentStroke.isNotEmpty) _currentStroke,
+  ];
 
   @override
   void addPoints(Offset localPosition) {
@@ -32,6 +30,7 @@ class DrawingCanvasViewModel extends IDrawingCanvasViewModel {
 
   @override
   void clear() {
+    endStroke();
     _strokes = [];
     _currentStroke = [];
     notifyListeners();

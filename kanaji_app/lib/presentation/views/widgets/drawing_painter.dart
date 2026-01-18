@@ -24,6 +24,7 @@ class DrawingPainter extends CustomPainter {
         }
       }
     }
+    print('Painting ${strokes.length} strokes');
   }
 
   @override

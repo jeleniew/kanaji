@@ -53,7 +53,8 @@ class TracingViewModel extends IWritingViewModel {
       throw Exception('No character set selected');
     }
     _characters = await _characterRepository.getCharactersBySet(
-      _configurationService.selectedSet!);
+      _configurationService.selectedSet!
+    );
     _characterLength = _characters.length;
   }
 
@@ -102,9 +103,10 @@ class TracingViewModel extends IWritingViewModel {
     List<List<Offset>> expectedStrokes = _drawingCanvasViewModel.strokes;
 
     final character = _characters[_currentIndex];
+    print('Checking character: ${character.glyph}');
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
     final result = _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
-print('here');
+
     if (result) {
       _tracingResult = TracingResult.correct;
     } else {

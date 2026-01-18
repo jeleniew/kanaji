@@ -60,34 +60,6 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
     required this.initFuture,
   });
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   final vm = Provider.of<T>(context);
-  //   final drawingVM = context.read<IDrawingCanvasViewModel>();
-  //   vm.attachDrawingVM(drawingVM);
-
-  //   return BasePage(
-  //     title: title,
-  //     body: Column(
-  //       children: [
-  //         Text(vm.currentMeaning, style: TextStyle(fontSize: 48)),
-  //         Expanded(
-  //           child: canvas(vm),
-  //         ),
-  //         // if (vm.processedImage != null)
-  //         //   Container(
-  //         //     width: 128,
-  //         //     height: 127,
-  //         //     color: Colors.red,
-  //         //     child: RawImage(image: vm.processedImage),
-  //         //   ),
-  //         if (vm.tracingResult == TracingResult.none) _buildActionBar(vm),
-  //         if (vm.tracingResult != TracingResult.none) _buildResultBar(vm),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<T>(context);

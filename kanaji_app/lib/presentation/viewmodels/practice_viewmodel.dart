@@ -52,7 +52,8 @@ class PracticeViewModel extends IWritingViewModel {
       throw Exception('No character set selected');
     }
     _characters = await _characterRepository.getCharactersBySet(
-      _configurationService.selectedSet!);
+      _configurationService.selectedSet!
+    );
     _characterLength = _characters.length;
   }
 
@@ -148,7 +149,7 @@ class PracticeViewModel extends IWritingViewModel {
   @override
   void showHint() async {
     _currentCharacterSvg =
-      _kanjiRepository.getSvgByKanji(await currentCharacter);
+      _kanjiRepository.getSvgByKanji(currentCharacter);
     notifyListeners();
 
     Future.delayed(const Duration(milliseconds: 1000), () {
