@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kanaji/domain/entities/character_type.dart';
-import 'package:kanaji/domain/entities/progress_result.dart';
+import 'package:kanaji/domain/entities/result.dart';
 import 'package:kanaji/domain/helpers/i_database_helper.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -114,7 +114,7 @@ void main() {
       // THEN
       expect(result.length, 2);
       expect(result.first.characterId, 1);
-      expect(result.first.result, ProgressResultExtension.fromInt(1));
+      expect(result.first.result, ResultExtension.fromInt(1));
     });
   });
 }

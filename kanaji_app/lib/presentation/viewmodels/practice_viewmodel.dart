@@ -4,9 +4,10 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:kanaji/data/repositories/user_progress_repository.dart';
 import 'package:kanaji/domain/entities/character.dart';
-import 'package:kanaji/domain/entities/character_type.dart';
-import 'package:kanaji/domain/entities/tracing_result.dart';
+import 'package:kanaji/domain/entities/progress_mode.dart';
+import 'package:kanaji/domain/entities/result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
@@ -23,13 +24,15 @@ class PracticeViewModel extends IWritingViewModel {
   final IDrawingAnalyzerService _drawingAnalyzerService;
   final IKanjiRepository _kanjiRepository;
   final IConfigurationService _configurationService;
+  final UserProgressRepository _userProgressRepository;
 
   int _currentIndex = 0;
   late IDrawingCanvasViewModel _drawingCanvasViewModel;
-  TracingResult _tracingResult = TracingResult.none;
+  Result _tracingResult = Result.none;
   Future<String>? _currentCharacterSvg;
   int _characterLength = 0;
   late List<Character> _characters;
+  final List<Result> _results = [];
 
   PracticeViewModel({
     required ICharacterRepository characterRepository,
@@ -38,13 +41,15 @@ class PracticeViewModel extends IWritingViewModel {
     required IDrawingAnalyzerService drawingAnalyzerService,
     required IKanjiRepository kanjiRepository,
     required IConfigurationService configurationService,
+    required UserProgressRepository userProgressRepository,
   }) :
     _characterRepository = characterRepository,
     _modelService = modelService,
     _imageProcessingService = imageProcessingService,
     _drawingAnalyzerService = drawingAnalyzerService,
     _kanjiRepository = kanjiRepository,
-    _configurationService = configurationService;
+    _configurationService = configurationService,
+    _userProgressRepository = userProgressRepository;
   
   @override
   Future<void> init() async {
@@ -71,7 +76,7 @@ class PracticeViewModel extends IWritingViewModel {
     _characters[_currentIndex].meaning.replaceAll('|', ', ');
 
   @override
-  TracingResult get tracingResult => _tracingResult;
+  Result get tracingResult => _tracingResult;
 
   Future<String>? get currentCharacterSvg => _currentCharacterSvg;
 
@@ -83,10 +88,35 @@ class PracticeViewModel extends IWritingViewModel {
   }
 
   @override
-  void next() async {
+  void next(BuildContext context) async {
     clear();
-    _currentIndex = (_currentIndex + 1) % _characterLength;
+
+    if (_currentIndex + 1 >= _characterLength) {
+      await _userProgressRepository.addUserProgress(
+        _characters,
+        _results,
+        _configurationService.selectedSet!.id,
+        ProgressMode.practice,
+      );
+      // _currentIndex = 0;
+      // _results.clear();
+
+      goToResults(context);
+    } else {
+      _currentIndex++;
+    }
+
     notifyListeners();
+  }
+
+  void goToResults(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      '/results',
+      arguments: {
+        'setId': _configurationService.selectedSet!.id,
+        'mode': ProgressMode.practice,
+      },
+    );
   }
 
   @override
@@ -97,11 +127,10 @@ class PracticeViewModel extends IWritingViewModel {
     final svgPathData = await _kanjiRepository.getSvgByKanji(character.glyph);
     final result =  _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
 
-    if (result) {
-      _tracingResult = TracingResult.correct;
-    } else {
-      _tracingResult = TracingResult.incorrect;
-    }
+    _tracingResult = result ? Result.correct : Result.incorrect;
+
+    _results.add(_tracingResult);
+  
     notifyListeners();
   }
 
@@ -131,9 +160,9 @@ class PracticeViewModel extends IWritingViewModel {
     final predictions = (await result).map((e) => e['prediction']).toList();
     print('Predicted characters: $predictions');
     if (maches >= (await result).length / 2) {
-      _tracingResult = TracingResult.correct;
+      _tracingResult = Result.correct;
     } else {
-      _tracingResult = TracingResult.incorrect;
+      _tracingResult = Result.incorrect;
     }
     
     notifyListeners();
@@ -141,7 +170,7 @@ class PracticeViewModel extends IWritingViewModel {
 
   @override
   void clear() {
-    _tracingResult = TracingResult.none;
+    _tracingResult = Result.none;
     _drawingCanvasViewModel.clear();
     notifyListeners();
   }

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:kanaji/core/di/di.dart';
+import 'package:kanaji/data/repositories/user_progress_repository.dart';
 import 'package:kanaji/data/services/model_service.dart';
 import 'package:kanaji/domain/entities/character_type.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
@@ -25,6 +26,7 @@ import 'package:kanaji/presentation/viewmodels/interfaces/i_home_viewmodel.dart'
 import 'package:kanaji/presentation/viewmodels/home_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/configuration_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_select_characters_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/result_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/select_characters_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
@@ -32,6 +34,7 @@ import 'package:kanaji/presentation/views/create_dataset_page.dart';
 import 'package:kanaji/presentation/views/datasets_page.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
 import 'package:kanaji/presentation/views/configuration_page.dart';
+import 'package:kanaji/presentation/views/result_page.dart';
 import 'package:kanaji/presentation/views/select_characters_page.dart';
 import 'package:kanaji/presentation/views/tracing_page.dart';
 import 'package:kanaji/presentation/views/practice_page.dart';
@@ -62,7 +65,10 @@ void main() async {
           ),
         ),
         ChangeNotifierProvider<IHomeViewModel>(
-          create: (_) => HomeViewModel(),
+          create: (_) => HomeViewModel(
+            characterRepository: DI().getIt<ICharacterRepository>(),
+            userProgressRepository: DI().getIt<UserProgressRepository>(),
+          )..load(),
         ),
         ChangeNotifierProvider<IFlashcardsViewModel>(
           create: (_) => FlashcardsViewModel(
@@ -94,6 +100,7 @@ void main() async {
             drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),
             kanjiRepository: DI().getIt<IKanjiRepository>(),
             configurationService: DI().getIt<IConfigurationService>(),
+            userProgressRepository: DI().getIt<UserProgressRepository>(),
           ),
         ),
         ChangeNotifierProvider<IDatasetsViewmodel>(
@@ -109,6 +116,11 @@ void main() async {
         ChangeNotifierProvider<ISelectCharactersViewmodel>(
           create: (_) => SelectCharactersViewModel(
             characterRepository: DI().getIt<ICharacterRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<ResultViewmodel>(
+          create: (_) => ResultViewmodel(
+            DI().getIt<UserProgressRepository>(),
           ),
         ),
       ],
@@ -153,6 +165,7 @@ class MyApp extends StatelessWidget {
         '/datasets': (context) => DatasetsPage(title: 'Datasets'),
         '/create-dataset': (context) => const CreateDatasetPage(),
         '/select_characters': (context) => const SelectCharactersPage(),
+        '/results': (context) => ResultPage(),
         // '/quiz': (context) => QuizPage(title: 'Quiz Page'),
 
       },

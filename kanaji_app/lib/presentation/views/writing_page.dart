@@ -1,6 +1,6 @@
 // tracing_page.dart
 import 'package:flutter/material.dart';
-import 'package:kanaji/domain/entities/tracing_result.dart';
+import 'package:kanaji/domain/entities/result.dart';
 import 'package:kanaji/presentation/viewmodels/drawing_canvas_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/interfaces/i_writing_viewmodel.dart';
 import 'package:kanaji/presentation/views/base_page.dart';
@@ -87,10 +87,10 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
         Expanded(
           child: canvas(vm),
         ),
-        if (vm.tracingResult == TracingResult.none)
+        if (vm.tracingResult == Result.none)
           _buildActionBar(vm),
-        if (vm.tracingResult != TracingResult.none)
-          _buildResultBar(vm),
+        if (vm.tracingResult != Result.none)
+          _buildResultBar(vm, context),
       ],
     ),
   );
@@ -113,8 +113,8 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
     );
   }
   
-  Widget _buildResultBar(T vm) {
-    final isCorrect = vm.tracingResult == TracingResult.correct;
+  Widget _buildResultBar(T vm, BuildContext context) {
+    final isCorrect = vm.tracingResult == Result.correct;
     return Container(
       padding: EdgeInsets.all(16),
       color: isCorrect ? Colors.green : Colors.red,
@@ -129,7 +129,7 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
           if (isCorrect) ...[
             ElevatedButton(onPressed: vm.previous, child: Text('Previous')),
             SizedBox(width: 8),
-            ElevatedButton(onPressed: vm.next, child: Text('Next')),
+            ElevatedButton(onPressed: () =>vm.next(context), child: Text('Next')),
           ] else ...[
             ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),
           ],

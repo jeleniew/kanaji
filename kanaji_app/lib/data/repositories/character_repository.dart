@@ -44,6 +44,7 @@ class CharacterRepository implements ICharacterRepository {
     return result.map((e) => Character.fromMap(e)).toList();
   }
 
+  @override
   Future<Character> getCharacterByIndex(int index) async {
     final characters = await getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana);
     return characters[index];

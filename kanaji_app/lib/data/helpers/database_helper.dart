@@ -64,7 +64,7 @@ class DatabaseHelper implements IDatabaseHelper {
         result INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (character_id) REFERENCES characters(id),
-        FOREIGN KEY (set_id) REFERENCES character_sets(id),
+        FOREIGN KEY (set_id) REFERENCES character_sets(id)
       )
     ''');
 

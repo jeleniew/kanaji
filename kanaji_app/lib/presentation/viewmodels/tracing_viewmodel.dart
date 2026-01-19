@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kanaji/domain/entities/character.dart';
-import 'package:kanaji/domain/entities/tracing_result.dart';
+import 'package:kanaji/domain/entities/result.dart';
 import 'package:kanaji/domain/repositories/i_character_repository.dart';
 import 'package:kanaji/domain/repositories/i_kanji_repository.dart';
 import 'package:kanaji/domain/services/i_configuration_service.dart';
@@ -25,7 +25,7 @@ class TracingViewModel extends IWritingViewModel {
   final IConfigurationService _configurationService;
   
   late IDrawingCanvasViewModel _drawingCanvasViewModel;
-  TracingResult _tracingResult = TracingResult.none;
+  Result _tracingResult = Result.none;
   ui.Image? _processedImage;
   int _currentIndex = 0;
   late Future<String> _currentCharacterSvg;
@@ -76,7 +76,7 @@ class TracingViewModel extends IWritingViewModel {
   }
 
   @override
-  TracingResult get tracingResult => _tracingResult;
+  Result get tracingResult => _tracingResult;
 
   // TODO: use only for debugging
   ui.Image? get processedImage => _processedImage;
@@ -91,7 +91,7 @@ class TracingViewModel extends IWritingViewModel {
   }
 
   @override
-  void next() {
+  void next(BuildContext context) {
     clear();
     _currentIndex = (_currentIndex + 1) % _characterLength;
     print('Next index: $_currentIndex');
@@ -108,9 +108,9 @@ class TracingViewModel extends IWritingViewModel {
     final result = _drawingAnalyzerService.compare(expectedStrokes, svgPathData);
 
     if (result) {
-      _tracingResult = TracingResult.correct;
+      _tracingResult = Result.correct;
     } else {
-      _tracingResult = TracingResult.incorrect;
+      _tracingResult = Result.incorrect;
     }
     print('Result: $_tracingResult');
     notifyListeners();
@@ -142,9 +142,9 @@ class TracingViewModel extends IWritingViewModel {
     final predictions = (await result).map((e) => e['prediction']).toList();
     print('Predicted characters: $predictions');
     if (maches >= (await result).length / 2) {
-      _tracingResult = TracingResult.correct;
+      _tracingResult = Result.correct;
     } else {
-      _tracingResult = TracingResult.incorrect;
+      _tracingResult = Result.incorrect;
     }
     if (kDebugMode) {
       _processedImage =
@@ -161,7 +161,7 @@ class TracingViewModel extends IWritingViewModel {
 
   @override
   void clear() {
-    _tracingResult = TracingResult.none;
+    _tracingResult = Result.none;
     _drawingCanvasViewModel.clear();
     notifyListeners();
   }
