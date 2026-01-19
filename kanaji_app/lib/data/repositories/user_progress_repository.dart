@@ -19,9 +19,7 @@ class UserProgressRepository {
     final db = await _databaseHelper.database;
 
     final result = await db.query(
-      'user_progress',
-      // where: 'set_id = ?',
-      // whereArgs: [_configurationService.selectedSet?.id]
+      'user_progress'
     );
 
     final userProgressList = result.map((e) => UserProgress.fromMap(e)).toList();
@@ -101,6 +99,25 @@ class UserProgressRepository {
         'user_progress',
         {
           'character_id': character[i].id,
+          'set_id': setId,
+          'mode': mode.name,
+          'result': results[i] == Result.correct ? 1 : 0,
+          'created_at': now,
+        },
+      );
+    }    
+  }
+
+  Future<void> addUserProgressByCharacterIds(List<int> characterIds, List<Result> results, int setId, ProgressMode mode) async {
+    final db = await _databaseHelper.database;
+
+    final now = DateTime.now().toIso8601String();
+
+    for (int i = 0; i < characterIds.length; i++) {
+      await db.insert(
+        'user_progress',
+        {
+          'character_id': characterIds[i],
           'set_id': setId,
           'mode': mode.name,
           'result': results[i] == Result.correct ? 1 : 0,

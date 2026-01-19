@@ -56,8 +56,8 @@ class PracticeViewModel extends IWritingViewModel {
     if (_configurationService.selectedSet == null) {
       throw Exception('No character set selected');
     }
-    _characters = await _characterRepository.getCharactersBySet(
-      _configurationService.selectedSet!
+    _characters = await _characterRepository.getCharactersBySetId(
+      _configurationService.selectedSet!.id
     );
     _characterLength = _characters.length;
   }
@@ -97,6 +97,7 @@ class PracticeViewModel extends IWritingViewModel {
         _results,
         _configurationService.selectedSet!.id,
         ProgressMode.practice,
+        
       );
       // _currentIndex = 0;
       // _results.clear();

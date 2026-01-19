@@ -28,8 +28,8 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
     if (_configurationService.selectedSet == null) {
       throw Exception('No character set selected');
     }
-    _characters = await _characterRepository.getCharactersBySet(
-      _configurationService.selectedSet!);
+    _characters = await _characterRepository.getCharactersBySetId(
+      _configurationService.selectedSet!.id);
     _characterLength = _characters.length;
   }
 

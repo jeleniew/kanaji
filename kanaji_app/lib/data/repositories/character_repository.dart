@@ -31,7 +31,7 @@ class CharacterRepository implements ICharacterRepository {
   }
 
   @override
-  Future<List<Character>> getCharactersBySet(CharacterSet characterSet) async {
+  Future<List<Character>> getCharactersBySetId(int setId) async {
     final db = await dbHelper.database;
 
     final result = await db.rawQuery('''
@@ -39,7 +39,7 @@ class CharacterRepository implements ICharacterRepository {
       FROM characters c
       JOIN character_set_items csi ON c.id = csi.character_id
       WHERE csi.character_set_id = ?
-    ''', [characterSet.id]);
+    ''', [setId]);
 
     return result.map((e) => Character.fromMap(e)).toList();
   }

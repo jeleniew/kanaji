@@ -31,6 +31,11 @@ class ConfigurationViewModel extends IConfigurationViewModel {
 
   @override
   void startTraining(BuildContext context, String nextRoute) {
-    Navigator.of(context).pushNamed(nextRoute);
+    Navigator.of(context).pushNamed(nextRoute,
+      arguments: {
+        'setId': _configurationService.selectedSet!.id,
+      },
+    );
+    
   }
 }
