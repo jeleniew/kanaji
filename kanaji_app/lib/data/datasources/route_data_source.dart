@@ -7,6 +7,7 @@ class RouteDataSource {
     AppRoute(name: 'Memory Practice', path: '/memory_practice_configuration'),
     AppRoute(name: 'Datasets', path: '/datasets'),
     AppRoute(name: 'Test', path: '/test_configuration'),
+    AppRoute(name: 'Compare', path: '/compare_configuration'),
   ];
 
   List<AppRoute> getRoutes() => _routes;

@@ -21,7 +21,7 @@ class ModelPredictionService implements IModelPredictionService {
   @override
   Future<void> init() async {
     for (var model in models) {
-      if (!{"kanji_grade1v2", "hiragana2"}.contains(model.name)) {
+      if (!{"kanji_grade1_missing", "hiragana"}.contains(model.name)) {
         continue;
       }
       ModelRunner runner = ModelRunner();
@@ -35,6 +35,7 @@ class ModelPredictionService implements IModelPredictionService {
     List<dynamic> results = [];
 
     for (var runner in runners) {
+      print("Using model: ${runner.model.name} with training mode: ${runner.model.trainingMode}");
       if (runner.model.trainingMode != trainingMode) {
         continue;
       }
@@ -47,7 +48,7 @@ class ModelPredictionService implements IModelPredictionService {
           ? CharacterDataSource().getAllHiragana()[predictedIdx].glyph 
           : "?";
         print("Model ${runner.model.name} predicted: $prediction");
-        results.add({"model": runner.model.name, "prediction": prediction});
+        results.add(prediction);
       } catch (e) {
         print("Prediction failed for model ${runner.model}: $e");
       }

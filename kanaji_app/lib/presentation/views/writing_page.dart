@@ -106,8 +106,6 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
         SizedBox(width: 8),
         ElevatedButton(onPressed: vm.check, child: Text('Check')),
         SizedBox(width: 8),
-        ElevatedButton(onPressed: vm.checkAI, child: Text('Check AI')),
-        SizedBox(width: 8),
         ElevatedButton(onPressed: vm.showHint, child: Text('Hint')),
       ],
     );

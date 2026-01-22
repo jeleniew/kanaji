@@ -15,6 +15,7 @@ import 'package:kanaji/domain/services/i_image_processing_service.dart';
 import 'package:kanaji/domain/services/i_model_prediction_service.dart';
 import 'package:kanaji/domain/repositories/i_route_repository.dart';
 import 'package:kanaji/presentation/viewmodels/app_drawer_viewmodel.dart';
+import 'package:kanaji/presentation/viewmodels/compare_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/create_dataset_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/datasets_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/flashcards_viewmodel.dart';
@@ -32,6 +33,7 @@ import 'package:kanaji/presentation/viewmodels/select_characters_viewmodel.dart'
 import 'package:kanaji/presentation/viewmodels/test_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/tracing_viewmodel.dart';
 import 'package:kanaji/presentation/viewmodels/practice_viewmodel.dart';
+import 'package:kanaji/presentation/views/compare_page.dart';
 import 'package:kanaji/presentation/views/create_dataset_page.dart';
 import 'package:kanaji/presentation/views/datasets_page.dart';
 import 'package:kanaji/presentation/views/home_page.dart';
@@ -104,6 +106,16 @@ void main() async {
             kanjiRepository: DI().getIt<IKanjiRepository>(),
             configurationService: DI().getIt<IConfigurationService>(),
             userProgressRepository: DI().getIt<UserProgressRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<CompareViewmodel>(
+          create: (_) => CompareViewmodel(
+            characterRepository: DI().getIt<ICharacterRepository>(),
+            modelService: DI().getIt<IModelPredictionService>(),
+            imageProcessingService: DI().getIt<IImageProcessingService>(),
+            drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),
+            kanjiRepository: DI().getIt<IKanjiRepository>(),
+            configurationService: DI().getIt<IConfigurationService>(),
           ),
         ),
         ChangeNotifierProvider<IDatasetsViewmodel>(
@@ -180,6 +192,11 @@ class MyApp extends StatelessWidget {
           '/test',
         ),
         '/test': (context) => TestPage(),
+        '/compare_configuration': (context) => ConfigurationPage(
+          "Compare",
+          '/compare',
+        ),
+        '/compare': (context) => ComparePage(title: 'Compare$title'),
       },
     );
   }

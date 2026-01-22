@@ -8,11 +8,11 @@ class CharacterDataSource {
   List<Character> getAllKanji() => kanji;
 
   List<Character> hiragana = [
+    Character(id: 1, glyph: 'あ', meaning: 'a'),
     Character(id: 1, glyph: 'い', meaning: 'i'),
     Character(id: 1, glyph: 'う', meaning: 'u'),
     Character(id: 1, glyph: 'え', meaning: 'e'),
     Character(id: 1, glyph: 'お', meaning: 'o'),
-    Character(id: 1, glyph: 'あ', meaning: 'a'),
     Character(id: 1, glyph: 'か', meaning: 'ka'),
     Character(id: 1, glyph: 'き', meaning: 'ki'),
     Character(id: 1, glyph: 'く', meaning: 'ku'),
@@ -122,7 +122,7 @@ class CharacterDataSource {
     Character(id: 1, glyph: '上', meaning: 'up',  reading: ''),
     Character(id: 1, glyph: '下', meaning: 'down',  reading: ''),
     Character(id: 1, glyph: '左', meaning: 'left',  reading: ''),
-    Character(id: 1, glyph: '右', meaning: 'right',  reading: ''),
+    // Character(id: 1, glyph: '右', meaning: 'right',  reading: ''),
     Character(id: 1, glyph: '中', meaning: 'middle',  reading: ''),
     Character(id: 1, glyph: '大', meaning: 'big',  reading: ''),
     Character(id: 1, glyph: '小', meaning: 'small',  reading: ''),
