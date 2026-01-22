@@ -1,5 +1,6 @@
 // drawing_analyzer_service.dart
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:kanaji/domain/services/i_drawing_analyzer_service.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
@@ -10,7 +11,6 @@ import 'package:xml/xml.dart';
 
 class StrokesAnalyzerService implements IDrawingAnalyzerService {
   static const double _threshold = 0.35;
-  static const int _resamplePoints = 16;
 
   List<String> _extractPaths(String svgData) {
     final document = XmlDocument.parse(svgData);
@@ -23,53 +23,44 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
       .toList();
   }
 
-  List<List<Offset>> _svgPathToPoints(String svgPathData) {
-    final List<String> pathDatas = _extractPaths(svgPathData);
-    final List<List<Offset>> allStrokes = [];
+  List<Offset> _resamplePathMetric(PathMetric metric, int sampleNumber) {
+    double length = metric.length;
+    List<Offset> strokePoints = [];
 
-    for (final d in pathDatas) {
-      final Path path = parseSvgPath(d);
-
-      for (final PathMetric metric in path.computeMetrics()) {
-        double length = metric.length;
-        List<Offset> strokePoints = [];
-
-        for (int i = 0; i <= _resamplePoints; i++) {
-          double distance = (i / (_resamplePoints - 1)) * length;
-          final targent = metric.getTangentForOffset(distance);
-          if (targent != null) strokePoints.add(targent.position);
-        }
-        allStrokes.add(strokePoints);
-      }
+    for (int i = 0; i <= sampleNumber; i++) {
+      double distance = (i / (sampleNumber - 1)) * length;
+      final targent = metric.getTangentForOffset(distance);
+      if (targent != null) strokePoints.add(targent.position);
     }
-    return allStrokes;
+      
+    return strokePoints;
   }
 
   @override
   bool compare(List<List<Offset>> userStrokes, String svgPathData) {
-    List<List<Offset>> referenceStrokes = _svgPathToPoints(svgPathData);
-    
-    if (userStrokes.length != referenceStrokes.length) {
+    final List<String> pathsDatas = _extractPaths(svgPathData);
+
+    if (userStrokes.length != pathsDatas.length) {
       return false;
     }
 
-    if (!_compareStrokes(userStrokes, referenceStrokes)) {
+    if (!_compareStrokes(userStrokes, svgPathData)) {
       return false;
     }
 
     return true;
   }
 
-  bool _compareStrokes(List<List<Offset>> userStrokes, List<List<Offset>> referenceStrokes) {
+  bool _compareStrokes(List<List<Offset>> userStrokes, String svgPathData) {
     final normalizedUser = _normalize(userStrokes);
-    final normalizedReference = _normalize(referenceStrokes);
+    final normalizedReference = _getNormalizedReferenceMetrics(svgPathData);
 
     for (int i = 0; i < normalizedUser.length; i++) {
       final userStroke = normalizedUser[i];
-      final referenceStroke = normalizedReference[i];
+      final referenceMetric = normalizedReference[i];
 
       final userStrokeLength = _pathLength(userStroke);
-      final referenceStrokeLength = _pathLength(referenceStroke);
+      final referenceStrokeLength = referenceMetric.length;
 
       // TODO: tune threshold
       final lengthRatioThreshold = 0.75;
@@ -85,7 +76,7 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
       final int sampleNumber = (userStrokeLength > referenceStrokeLength ? userStrokeLength : referenceStrokeLength) ~/ 0.1;
 
       final sampledUserStroke = _resample(userStroke, sampleNumber);
-      final sampledReferenceStroke = _resample(referenceStroke, sampleNumber);
+      final sampledReferenceStroke = _resamplePathMetric(referenceMetric, sampleNumber);
 
       final strokeDistance = _pathDistance(sampledUserStroke, sampledReferenceStroke);
 
@@ -128,18 +119,35 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
     }).toList();
   }
 
-  List<Offset> _priorResample(List<Offset> stroke, int n) {
-    // TODO: use curvature to check if additional samples are needed on curves
-    return [];
-  }
+  List<PathMetric> _getNormalizedReferenceMetrics(String svgPathData) {
+    final paths = _extractPaths(svgPathData)
+        .map(parseSvgPath)
+        .toList();
 
-  double _curvature(Offset a, Offset b, Offset c) {
-    final ab = a - b;
-    final bc = b - c;
+    Rect? bounds;
+    for (final p in paths) {
+      bounds = bounds == null ? p.getBounds() : bounds.expandToInclude(p.getBounds());
+    }
 
-    final angle = (atan2(bc.dy, bc.dx) - atan2(ab.dy, ab.dx)).abs();
+    final scale = 1.0 / max(bounds!.width, bounds.height);
 
-    return angle;
+    final matrix = Float64List.fromList([
+      scale, 0,     0, 0,
+      0,     scale, 0, 0,
+      0,     0,     1, 0,
+      -bounds.left * scale,
+      -bounds.top  * scale,
+      0,
+      1,
+    ]);
+
+    final metrics = <PathMetric>[];
+    for (final p in paths) {
+      final normalized = p.transform(matrix);
+      metrics.addAll(normalized.computeMetrics());
+    }
+
+    return metrics;
   }
 
   List<Offset> _resample(List<Offset> stroke, int n) {
@@ -161,7 +169,6 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
         final newY = prevPoint.dy + t * (currPoint.dy - prevPoint.dy);
         final newPoint = Offset(newX, newY);
         resampled.add(newPoint);
-        stroke.insert(i, newPoint);
         D = 0.0;
       } else {
         D += d;
