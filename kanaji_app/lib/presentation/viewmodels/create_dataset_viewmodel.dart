@@ -6,14 +6,13 @@ import 'package:kanaji/presentation/viewmodels/interfaces/i_select_characters_vi
 import 'package:provider/provider.dart';
 
 class CreateDatasetViewmodel extends ICreateDatasetViewModel {
-  final ICharacterRepository _characterRepository;
   String _datasetTitle = '';
   String _datasetDescription = '';
   CharacterType? _selectedType;
 
   CreateDatasetViewmodel({
     required ICharacterRepository characterRepository,
-  }) : _characterRepository = characterRepository;
+  });
 
   @override
   String get datasetTitle => _datasetTitle;
