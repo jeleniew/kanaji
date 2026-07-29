@@ -45,9 +45,15 @@ class CharacterRepository implements ICharacterRepository {
   }
 
   @override
-  Future<Character> getCharacterByIndex(int index) async {
-    final characters = await getCharactersByType(_configurationService.selectedSet?.type ?? CharacterType.hiragana);
-    return characters[index];
+  Future<Character?> getCharacterByIndex(int index) async {
+    final selectedSet = _configurationService.selectedSet;
+
+    if (selectedSet == null) {
+      return null;
+    }
+
+    final characters = await getCharactersByType(selectedSet.type);
+    return index < characters.length ? characters[index] : null;
   }
 
   @override

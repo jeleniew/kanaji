@@ -106,8 +106,6 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
         SizedBox(width: 8),
         ElevatedButton(onPressed: vm.check, child: Text('Check')),
         SizedBox(width: 8),
-        ElevatedButton(onPressed: vm.checkAI, child: Text('Check AI')),
-        SizedBox(width: 8),
         ElevatedButton(onPressed: vm.showHint, child: Text('Hint')),
       ],
     );
@@ -127,8 +125,6 @@ class _InternalWritingPage<T extends IWritingViewModel> extends StatelessWidget 
             ),
           ),
           if (isCorrect) ...[
-            ElevatedButton(onPressed: vm.previous, child: Text('Previous')),
-            SizedBox(width: 8),
             ElevatedButton(onPressed: () =>vm.next(context), child: Text('Next')),
           ] else ...[
             ElevatedButton(onPressed: vm.clear, child: Text('Try Again')),

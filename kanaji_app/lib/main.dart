@@ -57,6 +57,7 @@ void main() async {
   }
   
   DI().initDI();
+  final di = DI();
 
   runApp(
     // TODO: user context.watch insead of provider
@@ -64,30 +65,30 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => AppDrawerViewModel(
-            routeRepository: DI().getIt<IRouteRepository>()
+            routeRepository: di.getIt<IRouteRepository>()
           ),
         ),
         ChangeNotifierProvider<IHomeViewModel>(
           create: (_) => HomeViewModel(
-            characterRepository: DI().getIt<ICharacterRepository>(),
-            userProgressRepository: DI().getIt<UserProgressRepository>(),
+            characterRepository: di.getIt<ICharacterRepository>(),
+            userProgressRepository: di.getIt<UserProgressRepository>(),
           )..load(),
         ),
         ChangeNotifierProvider<IFlashcardsViewModel>(
           create: (_) => FlashcardsViewModel(
-            characterRepository: DI().getIt<ICharacterRepository>(),
-            configurationService: DI().getIt<IConfigurationService>(),
+            characterRepository: di.getIt<ICharacterRepository>(),
+            configurationService: di.getIt<IConfigurationService>(),
           ),
         ),
         ChangeNotifierProvider<IConfigurationViewModel>(
           create: (_) => ConfigurationViewModel(
-            configurationService: DI().getIt<IConfigurationService>(),
-            characterRepository: DI().getIt<ICharacterRepository>(),
+            configurationService: di.getIt<IConfigurationService>(),
+            characterRepository: di.getIt<ICharacterRepository>(),
           ),
         ),
         ChangeNotifierProvider<TracingViewModel>(
           create: (_) => TracingViewModel(
-            characterRepository: DI().getIt<ICharacterRepository>(),
+            characterRepository: di.getIt<ICharacterRepository>(),
             modelService: DI().getIt<IModelPredictionService>(),
             imageProcessingService: DI().getIt<IImageProcessingService>(),
             drawingAnalyzerService: DI().getIt<IDrawingAnalyzerService>(),

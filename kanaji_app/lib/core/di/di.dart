@@ -41,7 +41,7 @@ class DI {
     getIt.registerLazySingleton<IModelPredictionService>(() => ModelPredictionService());
     getIt.registerLazySingleton<IImageProcessingService>(() => ImageProcessingService());
     // getIt.registerLazySingleton<IDrawingAnalyzerService>(() => DrawingAnalyzerService());
-      getIt.registerLazySingleton<IDrawingAnalyzerService>(() => StrokesAnalyzerService());
+    getIt.registerLazySingleton<IDrawingAnalyzerService>(() => StrokesAnalyzerService());
     getIt.registerLazySingleton<IKanjiRepository>(() => KanjiRepository());
   }
 }

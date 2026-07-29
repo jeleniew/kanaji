@@ -31,6 +31,7 @@ class FlashcardsViewModel extends IFlashcardsViewModel {
     _characters = await _characterRepository.getCharactersBySetId(
       _configurationService.selectedSet!.id);
     _characterLength = _characters.length;
+    notifyListeners();
   }
 
   @override

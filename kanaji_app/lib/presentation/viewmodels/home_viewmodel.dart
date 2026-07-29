@@ -50,7 +50,9 @@ class HomeViewModel extends IHomeViewModel {
     newlyLearnedGlyphs.clear();
     for (final id in ids) {
       final char = await characterRepository.getCharacterByIndex(id);
-      newlyLearnedGlyphs.add(char.glyph);
+      if (char != null) {
+        newlyLearnedGlyphs.add(char.glyph);
+      }
     }
     print('finished');
 

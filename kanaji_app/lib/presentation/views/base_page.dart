@@ -13,6 +13,7 @@ class BasePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        backgroundColor: Color(0xFFFFDDE9),
       ),
       body: SafeArea(
         bottom: true,

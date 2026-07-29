@@ -10,7 +10,7 @@ import 'package:xml/xml.dart';
 // TODO: 'chi' in incorect in my test
 
 class StrokesAnalyzerService implements IDrawingAnalyzerService {
-  static const double _threshold = 0.35;
+  static const double _threshold = 0.25;
 
   List<String> _extractPaths(String svgData) {
     final document = XmlDocument.parse(svgData);
@@ -52,8 +52,12 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
   }
 
   bool _compareStrokes(List<List<Offset>> userStrokes, String svgPathData) {
-    final normalizedUser = _normalize(userStrokes);
-    final normalizedReference = _getNormalizedReferenceMetrics(svgPathData);
+    final List<List<Offset>> normalizedUser = _normalize(userStrokes);
+    final List<PathMetric> normalizedReference = _getNormalizedReferenceMetrics(svgPathData);
+
+    // Lista do zbierania odległości i stosunków długości
+    final List<double> distances = [];
+    final List<double> lengthRatios = [];
 
     for (int i = 0; i < normalizedUser.length; i++) {
       final userStroke = normalizedUser[i];
@@ -62,16 +66,8 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
       final userStrokeLength = _pathLength(userStroke);
       final referenceStrokeLength = referenceMetric.length;
 
-      // TODO: tune threshold
-      final lengthRatioThreshold = 0.75;
-
-      if (userStrokeLength/referenceStrokeLength < (1 - lengthRatioThreshold) ||
-          userStrokeLength/referenceStrokeLength > (1 + lengthRatioThreshold)) {
-        print("Stroke $i length mismatch: ${userStrokeLength/referenceStrokeLength}");
-        print("User stroke length: $userStrokeLength");
-        print("Reference stroke length: $referenceStrokeLength");
-        return false;
-      }
+      final lengthRatio = userStrokeLength / referenceStrokeLength;
+      lengthRatios.add(lengthRatio);
 
       final int sampleNumber = (userStrokeLength > referenceStrokeLength ? userStrokeLength : referenceStrokeLength) ~/ 0.1;
 
@@ -79,6 +75,12 @@ class StrokesAnalyzerService implements IDrawingAnalyzerService {
       final sampledReferenceStroke = _resamplePathMetric(referenceMetric, sampleNumber);
 
       final strokeDistance = _pathDistance(sampledUserStroke, sampledReferenceStroke);
+      distances.add(strokeDistance);
+
+      const lengthRatioThreshold = 0.75;
+      if (lengthRatio < (1 - lengthRatioThreshold) || lengthRatio > (1 + lengthRatioThreshold)) {
+        return false;
+      }
 
       if (strokeDistance > _threshold) {
         print("Stroke $i distance too high: $strokeDistance");
