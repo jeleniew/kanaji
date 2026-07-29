@@ -1,7 +1,6 @@
 // di.dart
 
 import 'package:get_it/get_it.dart';
-import 'package:kanaji/data/datasources/character_data_source.dart';
 import 'package:kanaji/data/helpers/database_helper.dart';
 import 'package:kanaji/data/repositories/kanji_repository.dart';
 import 'package:kanaji/data/repositories/user_progress_repository.dart';

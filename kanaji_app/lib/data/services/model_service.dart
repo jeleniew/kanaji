@@ -42,9 +42,9 @@ class ModelPredictionService implements IModelPredictionService {
         var predictedIdx = await runner.predict(inputData, trainingMode);
         print("Predicted index: $predictedIdx");
         var prediction = trainingMode == CharacterType.kanji
-          ? CharacterDataSource().getAllKanji()[predictedIdx].glyph 
+          ? CharacterDataSource.getAllKanji()[predictedIdx].glyph 
           : trainingMode == CharacterType.hiragana
-          ? CharacterDataSource().getAllHiragana()[predictedIdx].glyph 
+          ? CharacterDataSource.getAllHiragana()[predictedIdx].glyph 
           : "?";
         print("Model ${runner.model.name} predicted: $prediction");
         results.add({"model": runner.model.name, "prediction": prediction});

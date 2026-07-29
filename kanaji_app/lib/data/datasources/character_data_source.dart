@@ -3,11 +3,11 @@
 import 'package:kanaji/domain/entities/character.dart';
 
 class CharacterDataSource {
-  List<Character> getAllHiragana() => hiragana;
-  List<Character> getAllKatakana() => katakana;
-  List<Character> getAllKanji() => kanji;
+  static List<Character> getAllHiragana() => hiragana;
+  static List<Character> getAllKatakana() => katakana;
+  static List<Character> getAllKanji() => kanji;
 
-  List<Character> hiragana = [
+  static final List<Character> hiragana = [
     Character(id: 1, glyph: 'い', meaning: 'i'),
     Character(id: 1, glyph: 'う', meaning: 'u'),
     Character(id: 1, glyph: 'え', meaning: 'e'),
@@ -56,7 +56,7 @@ class CharacterDataSource {
     Character(id: 1, glyph: 'ん', meaning: 'n'),
   ];
   
-  List<Character> katakana = [
+  static final List<Character> katakana = [
     Character(id: 1, glyph: 'ア', meaning: 'a'),
     Character(id: 1, glyph: 'イ', meaning: 'i'),
     Character(id: 1, glyph: 'ウ', meaning: 'u'),
@@ -105,7 +105,7 @@ class CharacterDataSource {
     Character(id: 1, glyph: 'ン', meaning: 'n'),
   ];
 
-  List<Character> kanji = [
+  static final List<Character> kanji = [
     // First Grade (80 kanji)
     Character(id: 1, glyph: '一', meaning: 'one',  reading: 'いち|いつ'),
     Character(id: 1, glyph: '二', meaning: 'two',  reading: 'に|じ'),
