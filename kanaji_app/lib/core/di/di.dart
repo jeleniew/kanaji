@@ -6,7 +6,6 @@ import 'package:kanaji/data/helpers/database_helper.dart';
 import 'package:kanaji/data/repositories/kanji_repository.dart';
 import 'package:kanaji/data/repositories/user_progress_repository.dart';
 import 'package:kanaji/data/services/configuration_service.dart';
-import 'package:kanaji/data/services/drawing_analyzer_service.dart';
 import 'package:kanaji/data/services/image_processing_service.dart';
 import 'package:kanaji/data/services/model_service.dart';
 import 'package:kanaji/data/repositories/character_repository.dart';
@@ -40,7 +39,6 @@ class DI {
     ));
     getIt.registerLazySingleton<IModelPredictionService>(() => ModelPredictionService());
     getIt.registerLazySingleton<IImageProcessingService>(() => ImageProcessingService());
-    // getIt.registerLazySingleton<IDrawingAnalyzerService>(() => DrawingAnalyzerService());
     getIt.registerLazySingleton<IDrawingAnalyzerService>(() => StrokesAnalyzerService());
     getIt.registerLazySingleton<IKanjiRepository>(() => KanjiRepository());
   }
